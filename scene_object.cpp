@@ -36,8 +36,8 @@ bool UnitSquare::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 	float xCheck = newRay.origin[0] + (t * newRay.dir[0]);
 	float yCheck = newRay.origin[1] + (t * newRay.dir[1]);
 
-	bool xCheckRange = xCheck >= -0.5 && xCheck >= 0.5;
-	bool yCheckRange = yCheck >= -0.5 && yCheck >= 0.5;
+	bool xCheckRange = xCheck >= -0.5 && xCheck <= 0.5;
+	bool yCheckRange = yCheck >= -0.5 && yCheck <= 0.5;
 
 	if (xCheckRange && yCheckRange){
 		// then there is an intersection
@@ -53,6 +53,7 @@ bool UnitSquare::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 			ray.intersection.none = false;
 			return true;
 		}
+
 	}
 	return false;
 }
@@ -79,7 +80,7 @@ bool UnitSphere::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 
 	// Quadratic formula
 	double a = newRay.dir.dot(newRay.dir);
-	double b = (newRay.dir.dot(distance)) * 2;
+	double b = (newRay.dir.dot(distance));
 	double c = distance.dot(distance) - 1;
 
 	double d = (b * b) - (a * c);
@@ -96,25 +97,29 @@ bool UnitSphere::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 	if (lambda0 < 0 && lambda1 < 0) return false;
 	else if (lambda0 < 0) t = lambda1;
 	else if (lambda1 < 0) t = lambda0;
-	else 						 t = fmin(lambda1,lambda0);
+	else 						 			t = fmin(lambda1,lambda0);
 
 	// get intersection
-	float xCheck = newRay.origin[0] + t * newRay.dir[0];
-	float yCheck = newRay.origin[1] + t * newRay.dir[1];
-	float zCheck = newRay.origin[2] + t * newRay.dir[2];
+	float xCheck = newRay.origin[0] + (t * newRay.dir[0]);
+	float yCheck = newRay.origin[1] + (t * newRay.dir[1]);
+	float zCheck = newRay.origin[2] + (t * newRay.dir[2]);
 	Vector3D norm(xCheck,yCheck,zCheck);
 	Point3D point(xCheck,yCheck,zCheck);
-	norm.normalize();
 
-	// update the given ray
-	if (ray.intersection.none || ray.intersection.t_value > t) {
-			ray.intersection.t_value = t;
-			ray.intersection.point = modelToWorld * point;
-			ray.intersection.normal = worldToModel.transpose() * norm;
-			ray.intersection.normal.normalize();
-			ray.intersection.none = false;
-			return true;
-	}
+
+			// update the given ray
+			if (ray.intersection.none || ray.intersection.t_value > t) {
+					ray.intersection.t_value = t;
+					Point3D point(xCheck, yCheck, zCheck);
+					ray.intersection.point = modelToWorld * point;
+					Vector3D norm(0.0f, 0.0f, 1.0f);
+					Vector3D newNormal = transNorm(worldToModel, norm);
+					newNormal.normalize();
+					ray.intersection.normal = newNormal;
+					ray.intersection.none = false;
+					return true;
+			}
+	
 
 	return false;
 }

@@ -270,7 +270,7 @@ void Raytracer::render( int width, int height, Point3D eye, Vector3D view,
 
 				Point3D rayOriginWorld = viewToWorld * imagePlane;
 				Vector3D rayDir = imagePlane - origin;
-				Vector3D rayDirWorld = viewToWorld *  rayDir;
+				Vector3D rayDirWorld = viewToWorld * rayDir;
 
 				Ray3D ray;
 
