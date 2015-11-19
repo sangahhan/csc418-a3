@@ -52,7 +52,6 @@ bool UnitSquare::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 			ray.intersection.normal = newNormal;
 			ray.intersection.none = false;
 			return true;
-
 		}
 	}
 	return false;
@@ -90,8 +89,8 @@ bool UnitSphere::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 
 	d = sqrt(d);
 
-  float lambda0 = (-a + sqrt(d))/(2.0 * a);
-  float lambda1 = (-a - sqrt(d))/(2.0 * a);
+  float lambda0 = (-b + sqrt(d))/(2.0 * a);
+  float lambda1 = (-b - sqrt(d))/(2.0 * a);
 	float t;
 
 	if (lambda0 < 0 && lambda1 < 0) return false;
