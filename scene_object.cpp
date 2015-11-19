@@ -87,7 +87,7 @@ bool UnitSphere::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 	// negative discriminant --> ray doesn't intersect
 	if (d < 0) return false;
 
-	d = sqrt(d);
+     //d = sqrt(d);
 
   float lambda0 = (-b + sqrt(d))/(2.0 * a);
   float lambda1 = (-b - sqrt(d))/(2.0 * a);
