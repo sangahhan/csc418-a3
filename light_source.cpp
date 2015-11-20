@@ -12,14 +12,14 @@
 #include "light_source.h"
 
 void PointLight::shade( Ray3D& ray ) {
-	// TODO: implement this function to fill in values for ray.col 
+	// TODO: implement this function to fill in values for ray.col
 	// using phong shading.  Make sure your vectors are normalized, and
 	// clamp colour values to 1.0.
 	//
-	// It is assumed at this point that the intersection information in ray 
-	// is available.  So be sure that traverseScene() is called on the ray 
-	// before this function.  
-	
+	// It is assumed at this point that the intersection information in ray
+	// is available.  So be sure that traverseScene() is called on the ray
+	// before this function.
+
    //intersection normal
 	Vector3D N = ray.intersection.normal;
     N.normalize();
@@ -29,13 +29,13 @@ void PointLight::shade( Ray3D& ray ) {
     V.normalize();
 
     //reflection normal
-    Vector3D R = 2 * (V.dot(N) * N) - V;
+    Vector3D R = 2 * V.dot(N) * N - V;
     R.normalize();
 
     //Viewing vector noraml
     Vector3D D = -ray.dir;
     D.normalize();
-    
+
     //get the material variable
     //Material* M = ray.intersection.mat;
 
@@ -43,8 +43,8 @@ void PointLight::shade( Ray3D& ray ) {
 
     Colour diffuse = ray.intersection.mat->diffuse * (std::max(0.0, N.dot(V)) * _col_diffuse);
 
-    Colour specular = ray.intersection.mat->specular * (std::max(0.0, std::pow(V.dot(D),ray.intersection.mat->specular_exp)) * _col_specular);
-    
+    Colour specular = ray.intersection.mat->specular * (std::max(0.0, std::pow(D.dot(R),ray.intersection.mat->specular_exp)) * _col_specular);
+
     //signature
     //ray.col = diffuse;
 
@@ -52,11 +52,10 @@ void PointLight::shade( Ray3D& ray ) {
     //ray.col = diffuse + ambient;
 
     //Phong
-    //ray.col = diffuse + ambient + specular;
+    ray.col = diffuse + ambient + specular;
 
-    //ray.col.clamp();
+    ray.col.clamp();
 
 
 
 }
-
