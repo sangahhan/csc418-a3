@@ -233,13 +233,51 @@ Colour Raytracer::shadeRay( Ray3D& ray ) {
     // Don't bother shading if the ray didn't hit
     // anything.
     if (!ray.intersection.none) {
-        computeShading(ray);
-        col = ray.col;
-    }
+      computeShading(ray);
+      col = ray.col;
+			// You'll want to call shadeRay recursively (with a different ray,
+			// of course) here to implement reflection/refraction effects.
 
-    // You'll want to call shadeRay recursively (with a different ray,
-    // of course) here to implement reflection/refraction effects.
+			// FROM TUTORIAL:
+			/* if we bounce the ray off the surface and see what it hits, we
+			have a reflection. the new ray's origin is ray.intersection.point
+			and direction =
+			(2 * (ray.dir . ray.intersection.normal) * ray.intersetion.normal - ray.dir).normalize()
+			// from textbook: d−2(d·n)n
+			new colour = colour + shadeRay(newray) * damp factor
+			where the damp factor is based on distance
+			only bounce if the matieral is reflective and don't bounce infinitely*/
+  		if(ray.reflections < 2 && ray.intersection.mat->specular_exp > 0){
+				Point3D ray_intersect = ray.intersection.point;
+        Vector3D ray_dir = ray.dir;
+        Vector3D ray_norm = ray.intersection.normal;
+				ray_norm.normalize();
+				Vector3D reflection_dir = ray_dir - (2 * ray_dir.dot(ray_norm) * ray_norm);
+				reflection_dir.normalize();
 
+
+				Ray3D newRay;
+				newRay.origin = ray_intersect;
+				newRay.dir = reflection_dir;
+
+				// calculate shade of reflected ray
+	      shadeRay(newRay);
+
+				if (newRay.intersection.t_value > 0.0) {
+	        // the damp factor is based on distance
+					float dampFactor = fabs(1 /newRay.intersection.t_value); // TODO: is this the right way to get damp factor?
+					if (dampFactor < 0) dampFactor = 0;
+					if (dampFactor >= 1) dampFactor = 1;
+					// Set colour to include reflection
+					col = ray.col + dampFactor*newRay.col;
+	      }
+
+
+			}
+
+			col.clamp();
+
+		}
     return col;
 }
 
