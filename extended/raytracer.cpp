@@ -196,6 +196,31 @@ void Raytracer::traverseScene( SceneDagNode::Ptr node, Ray3D& ray ) {
 
 }
 
+Colour Raytracer::helpShade(Ray3D& ray, LightListNode::Ptr curLight, int n, float k)
+{  
+	Vector3D shadowDir;
+	shadowDir = curLight->light->get_position() - ray.intersection.point;
+	shadowDir[0] += k;
+    shadowDir[1] += k;
+    shadowDir[2] += k;
+	shadowDir.normalize();
+	Point3D shadowOrigin = ray.intersection.point + 0.01*shadowDir;
+
+	Ray3D shadowRay(shadowOrigin , shadowDir);
+	traverseScene(_root, shadowRay);
+	
+	// Compute non-shadow colour
+	curLight->light->shade(ray);
+	
+	// If ray intersects another object  it falls in a shadow
+	if (!shadowRay.intersection.none) 
+		return (1/n)*ray.col;
+	else{
+		return Colour(0,0,0);
+	}
+}
+
+
 void Raytracer::computeShading( Ray3D& ray ) {
     LightListNode::Ptr curLight = _lightSource;
     for (;;) {
@@ -203,20 +228,34 @@ void Raytracer::computeShading( Ray3D& ray ) {
         // Each lightSource provides its own shading function.
 
         // Implement shadows here if needed.
-
-        curLight->light->shade(ray);
-        curLight = curLight->next;
+        Colour tmp;
+        for (float i = 0 ; i<2.5;i = i + 0.50){
+			tmp = helpShade(ray,curLight, 5,i);
+			ray.col[0] += tmp[0];
+			ray.col[1] += tmp[1];
+			ray.col[2] += tmp[2];
+			/*
+			 * _rbuffer[i*width+j] += int(col[0]*255*coef);
+				_gbuffer[i*width+j] += int(col[1]*255*coef);
+				_bbuffer[i*width+j] += int(col[2]*255*coef);
+					*/
+		}
+		curLight = curLight->next;
     }
 }
 
 void Raytracer::initPixelBuffer() {
     int numbytes = _scrWidth * _scrHeight * sizeof(unsigned char);
-    _rbuffer = new unsigned char[numbytes];
-    std::fill_n(_rbuffer, numbytes,0);
-    _gbuffer = new unsigned char[numbytes];
-    std::fill_n(_gbuffer, numbytes,0);
-    _bbuffer = new unsigned char[numbytes];
-    std::fill_n(_bbuffer, numbytes,0);
+	_rbuffer = new unsigned char[numbytes];
+	_gbuffer = new unsigned char[numbytes];
+	_bbuffer = new unsigned char[numbytes];
+	for (int i = 0; i < _scrHeight; i++) {
+		for (int j = 0; j < _scrWidth; j++) {
+			_rbuffer[i*_scrWidth+j] = 0;
+			_gbuffer[i*_scrWidth+j] = 0;
+			_bbuffer[i*_scrWidth+j] = 0;
+		}
+	}
 }
 
 void Raytracer::flushPixelBuffer( std::string file_name ) {
