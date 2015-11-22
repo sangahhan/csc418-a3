@@ -29,6 +29,10 @@ Part d. - Li Wan
 Phong shading code is in light_source.cpp. We used the lecture slides' guide to
 find the values for diffuse, specular and ambient colours, and added them all
 together to produce Phong shading.
+- The rendering for the scene signature is in signature1.bmp and signature2.bmp
+- The rendering for the diffuse + affine components are in diffuse_ambient1.bmp
+    and diffuse_ambient2.bmp
+- The rendering for the Phong model are in phong1.bmp and phong2.bmp
 
 --
 

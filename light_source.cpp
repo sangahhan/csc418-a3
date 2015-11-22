@@ -46,7 +46,7 @@ void PointLight::shade( Ray3D& ray ) {
     Colour specular = ray.intersection.mat->specular * (std::max(0.0, std::pow(D.dot(R),ray.intersection.mat->specular_exp)) * _col_specular);
 
     //signature
-    //ray.col = diffuse;
+    //ray.col = ray.intersection.mat->diffuse;
 
     //diffuse and ambient
     //ray.col = diffuse + ambient;
