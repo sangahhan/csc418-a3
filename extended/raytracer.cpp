@@ -231,7 +231,7 @@ void Raytracer::computeShading( Ray3D& ray ) {
 				traverseScene(_root, newRay);
 
 				curLight->light->shade(ray);
-				if (!newRay.intersection.none){
+				if (!newRay.intersection.none && t >= newRay.intersection.t_value){
 						ray.col = 0.5 * ray.col; // if in shadow, darken
 						ray.col.clamp();
 				}
@@ -277,7 +277,7 @@ Colour Raytracer::shadeRay( Ray3D& ray ) {
 			new colour = colour + shadeRay(newray) * damp factor
 			where the damp factor is based on distance
 			only bounce if the matieral is reflective and don't bounce infinitely*/
-  		if(ray.reflections < 2 && ray.intersection.mat->specular_exp > 0){
+  		if(ray.intersection.mat->specular_exp > 0){
 				Point3D ray_intersect = ray.intersection.point;
         Vector3D ray_dir = ray.dir;
         Vector3D ray_norm = ray.intersection.normal;
@@ -299,11 +299,44 @@ Colour Raytracer::shadeRay( Ray3D& ray ) {
 					// have any perfectly reflective surfaces....
 					if (dampFactor < 0) dampFactor = 0;
 					if (dampFactor > 1) dampFactor = 1;
-					col = ray.col + dampFactor * newRay.col;
+					col = col + dampFactor * newRay.col;
 	      }
 
 
 			}
+
+			// handle refraction
+			if(ray.intersection.mat->refract_index > 0){
+				Point3D ray_origin = ray.intersection.point;
+        Vector3D ray_dir = ray.dir;
+        Vector3D ray_norm = ray.intersection.normal;
+				ray_norm.normalize();
+				ray_dir.normalize();
+
+				// http://www.cosinekitty.com/raytrace/chapter09_refraction.html
+				float nDotDir = ray_dir.dot(ray_norm);
+				float sinIn = sqrt(1 - nDotDir*nDotDir);;
+ 				double ind1, ind2;
+				double  sinOut, cosOut;
+				double refract_ratio = nDotDir < 0? 1 / ray.intersection.mat->refract_index : ray.intersection.mat->refract_index;
+				double sinT2 = refract_ratio * refract_ratio * (1.0 - nDotDir * nDotDir);
+				double cosT = sqrt(1.0 - sinT2);
+				std::cout<<sinT2<< std::endl;
+					Vector3D refraction_dir = refract_ratio * ray_dir + ( refract_ratio * nDotDir - cosT) * ray_norm;
+					refraction_dir.normalize();
+
+					Ray3D newRay;
+					newRay.origin = ray_origin + 0.01 * ray_dir;
+					newRay.dir = refraction_dir;
+
+					// calculate shade of reflected ray
+					shadeRay(newRay);
+					Colour refraction_colour = shadeRay(newRay);
+					if(!newRay.intersection.none) col = col + ray.intersection.mat->opacity *newRay.col;
+
+
+
+		}
 
 			col.clamp();
 

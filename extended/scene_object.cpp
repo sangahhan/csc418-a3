@@ -52,7 +52,7 @@ bool UnitSquare::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 			ray.intersection.point = modelToWorld * point;
 			ray.intersection.normal = newNormal;
 			ray.intersection.none = false;
-			
+
 			return true;
 		}
 

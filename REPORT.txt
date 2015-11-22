@@ -1,0 +1,62 @@
+
+Sang-Ah Han 998867418
+Li Wan 998801088
+
+Basic Ray-Tracer
+
+Part a. - Sang-Ah Han
+Ray casting code is in raytracer.cpp. We take the image plane and convert it to
+world space = i. Then we take the ray's direction that convert it to world space
+= d. The resulting ray begins at i and goes n direction d.
+
+Part b. - Sang-Ah Han
+Intersection for ray-square code is in scene_object.cpp. We convert the ray's
+origin and direction to object space. We assume that it's a unit square (width
+1, centered at origin). If we find that its t-value tells us there is an
+intersection that is in front of the ray, we set it that point to be the ray's
+intersection. We used the pseudo-code from tutorial to write our code.
+
+Part c. - Sang-Ah Han
+Intersection for ray-sphere code is in scene_object.cpp. We convert the ray's
+origin and direction to object space. We assume that it's a unit sphere (radius
+1, centered at origin). We use the quadratic formula to find the sphere's
+t-values. If we find that its t-value tells us there is an intersection that is
+in front of the ray, we set it that point to be the ray's intersection. We found
+the a, b, c values (quadratic formula) from the online notes on the course
+website.
+
+Part d. - Li Wan
+Phong shading code is in light_source.cpp. We used the lecture slides' guide to
+find the values for diffuse, specular and ambient colours, and added them all
+together to produce Phong shading.
+
+--
+
+Advanced Ray Tracer
+
+Specular reflections - Sang-Ah Han
+Shadow code is in raytracer.cpp, in the shadeRay function. We used notes from
+tutorial and from the textbook to construct a "reflection ray". If there was an
+intersection with the "reflection ray", then we added shadeRay(REFLECTION RAY)
+* DAMP FACTOR to the intersection's colour, where DAMP FACTOR is a factor based
+on the distance of the intersection.
+
+Shadows - Sang-Ah Han
+Similarly to the specular reflections, we used tutorial notes and textbook notes
+to construct a "shadow ray". If there was an intersection with the "reflection
+ray", then we added 0.5 * the intersection's colour to the intersection's colour
+(to make it darker).
+
+Non-trivial objects - Sang-Ah Han & Li Wan
+We drew a cylinder in our ray-tracing program. The most amount of code for this
+cylinder is in scene_object.cpp's UnitCylinder::intersect. Sang-Ah wrote the
+code to check for intersection around the quadric area of the cylinder. Li wrote
+the code to check for intersection at the caps of the cylinder.
+
+Refraction - Sang-Ah Han
+
+Soft shadows OR Glossy reflection - Sang-Ah Han
+
+Texture mapping - Li Wan
+
+Environment mapping - Li Wan
