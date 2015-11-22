@@ -52,7 +52,7 @@ bool UnitSquare::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 			ray.intersection.point = modelToWorld * point;
 			ray.intersection.normal = newNormal;
 			ray.intersection.none = false;
-			
+
 			return true;
 		}
 
@@ -114,4 +114,75 @@ bool UnitSphere::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 			}
 
 	return false;
+}
+
+bool UnitCylinder::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
+		const Matrix4x4& modelToWorld ) {
+	// TODO: implement intersection code for UnitCone, which is centred
+	// on the origin.
+
+	// Your goal here is to fill ray.intersection with correct values
+	// should an intersection occur.  This includes intersection.point,
+	// intersection.normal, intersection.none, intersection.t_value.
+	//
+	// HINT: Remember to first transform the ray into object space
+	// to simplify the intersection test.
+
+	Ray3D newRay;
+
+	newRay.origin = worldToModel * ray.origin;
+	newRay.dir = worldToModel * ray.dir;
+
+	Point3D centre(0.0f,0.0f,0.0f);
+	Vector3D distance = newRay.origin - centre;
+
+	float a = newRay.dir[0] * newRay.dir[0] + newRay.dir[1] * newRay.dir[1];
+	float b = distance[0] * newRay.dir[0] + distance[1] * newRay.dir[1];
+	float c = distance[0] * distance[0] + distance[1] * distance[1] - 1;
+	float d = b * b - a * c;
+
+
+  /*Find intersection with ”quadratic wall,” ignoring constraints on z,
+	   e.g. using x^2 + y^2 − (1/4) (1 − z^2) = 0.
+	   Then test the z component of p ̄(λ∗) against the constraint on z,
+	   e.g. z ≤ 1 or z < 1.*/
+	float t = -1;
+	float lambda0;
+	float lambda1;
+
+	// negative discriminant --> ray doesn't intersect
+	if (d <= 0 || a == 0) return false;
+ 	else {
+		lambda0 = (-b + sqrt(d))/ a;
+	  lambda1 = (-b - sqrt(d))/ a;
+		t = fmin(lambda0, lambda1);
+	}
+	if (ray.intersection.none || ray.intersection.t_value > t) {
+		Point3D point = newRay.origin + t * newRay.dir;
+		if ( (point[2] > -1) && (point[2] < 1)){
+			Vector3D newNormal = Vector3D(point[0], point[1], 0);
+			newNormal.normalize();
+
+			//update the ray
+			ray.intersection.none = false;
+			ray.intersection.t_value = t;
+			ray.intersection.point = modelToWorld * point;
+			ray.intersection.normal = transNorm(worldToModel, newNormal);
+			return true;
+		}
+	}
+
+
+	/*Intersect the ray with the planes containing the base or cap (e.g. z = 1
+		for the cylinder). Then test the x and y components of p ̄(λ∗) to see if they
+		satisfy interior constraints (e.g. x^2 + y^2 < 1 for the cylinder).*/
+	
+	/*If there are multiple intersections, then take the intersection with the
+		smallest positive λ (i.e., closest to the start of the ray).*/
+
+
+	return false;
+
+
+
 }

@@ -17,8 +17,8 @@ int main(int argc, char* argv[])
 	// change this if you're just implementing part one of the
 	// assignment.
 	Raytracer raytracer;
-	int width = 320;
-	int height = 240;
+	int width = 400;
+	int height = 400;
 
 	if (argc == 3) {
 		width = atoi(argv[1]);
@@ -29,6 +29,8 @@ int main(int argc, char* argv[])
 	Point3D eye(0., 0., 1.);
 	Vector3D view(0., 0., -1.);
 	Vector3D up(0., 1., 0.);
+	Vector3D side(0., 0., 1.);
+
 	double fov = 60;
 
 	// Defines a material for shading.
@@ -45,28 +47,44 @@ int main(int argc, char* argv[])
 
 	// Add a unit square into the scene with material mat.
     SceneDagNode::Ptr sphere = raytracer.addObject( std::make_shared<UnitSphere>(), gold );
+		SceneDagNode::Ptr cylinder = raytracer.addObject( std::make_shared<UnitCylinder>(), gold );
+		//SceneDagNode::Ptr plane2 = raytracer.addObject( std::make_shared<UnitSquare>(), jade );
     SceneDagNode::Ptr plane = raytracer.addObject( std::make_shared<UnitSquare>(), jade );
 
 	// Apply some transformations to the unit square.
 	double factor1[3] = { 1.0, 2.0, 1.0 };
-	double factor2[3] = { 6.0, 6.0, 6.0 };
+	double factor2[3] = { 7.5, 7.5, 7.5 };
+	//raytracer.translate(sphere, Vector3D(0., 0., 0.));
+	//raytracer.rotate(sphere, 'x', -45);
+	//raytracer.rotate(sphere, 'z', 45);
+	//raytracer.scale(sphere, Point3D(0., 0., 0.), factor1);
+
+	raytracer.translate(cylinder, Vector3D(-1., -2., -2.));
+	//raytracer.rotate(cylinder, 'x', -90);
+	//raytracer.rotate(cylinder, 'z', 90);
+
+	// Apply some transformations to the unit square.
 	raytracer.translate(sphere, Vector3D(0., 0., -5.));
-	raytracer.rotate(sphere, 'x', -45);
-	raytracer.rotate(sphere, 'z', 45);
-	raytracer.scale(sphere, Point3D(0., 0., 0.), factor1);
+	//raytracer.rotate(sphere, 'x', -45);
+	//raytracer.rotate(sphere, 'z', 45);
+	//raytracer.scale(sphere, Point3D(0., 0., 0.), factor1);
 
 	raytracer.translate(plane, Vector3D(0., 0., -7.));
 	raytracer.rotate(plane, 'z', 45);
 	raytracer.scale(plane, Point3D(0., 0., 0.), factor2);
 
-	// Render the scene, feel free to make the image smaller for
-	// testing purposes.
-	raytracer.render(width, height, eye, view, up, fov, "view1.bmp");
+		// Render the scene, feel free to make the image smaller for
+		// testing purposes.
+		raytracer.render(width, height, eye, view, up, fov, "view1.bmp");
 
-	// Render it from a different point of view.
-	Point3D eye2(4., 2., 1.);
-	Vector3D view2(-4., -2., -6.);
-	raytracer.render(width, height, eye2, view2, up, fov, "view2.bmp");
+		// Render it from a different point of view.
+		Point3D eye2(4., 2., 1.);
+		Vector3D view2(-4., -2., -6.);
+		raytracer.render(width, height, eye2, view2, up, fov, "view2.bmp");
+
+	Point3D eye3(4., 4., 3.);
+	Vector3D view3(-4., -3., -5.);
+	raytracer.render(width, height, eye3, view3, side, fov, "view3.bmp");
 
 	return 0;
 }
