@@ -175,10 +175,10 @@ struct Intersection {
 
 // Ray structure.
 struct Ray3D {
-    Ray3D() {
+    Ray3D() : reflections(0) {
         intersection.none = true;
     }
-    Ray3D( Point3D p, Vector3D v ) : origin(p), dir(v) {
+    Ray3D( Point3D p, Vector3D v ) : origin(p), dir(v), reflections(0) {
         intersection.none = true;
     }
     // Origin and direction of the ray.

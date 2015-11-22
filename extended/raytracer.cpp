@@ -196,31 +196,6 @@ void Raytracer::traverseScene( SceneDagNode::Ptr node, Ray3D& ray ) {
 
 }
 
-Colour Raytracer::helpShade(Ray3D& ray, LightListNode::Ptr curLight, int n, float k)
-{  
-	Vector3D shadowDir;
-	shadowDir = curLight->light->get_position() - ray.intersection.point;
-	shadowDir[0] += k;
-    shadowDir[1] += k;
-    shadowDir[2] += k;
-	shadowDir.normalize();
-	Point3D shadowOrigin = ray.intersection.point + 0.01*shadowDir;
-
-	Ray3D shadowRay(shadowOrigin , shadowDir);
-	traverseScene(_root, shadowRay);
-	
-	// Compute non-shadow colour
-	curLight->light->shade(ray);
-	
-	// If ray intersects another object  it falls in a shadow
-	if (!shadowRay.intersection.none) 
-		return (1/n)*ray.col;
-	else{
-		return Colour(0,0,0);
-	}
-}
-
-
 void Raytracer::computeShading( Ray3D& ray ) {
     LightListNode::Ptr curLight = _lightSource;
     for (;;) {
@@ -228,34 +203,50 @@ void Raytracer::computeShading( Ray3D& ray ) {
         // Each lightSource provides its own shading function.
 
         // Implement shadows here if needed.
-        Colour tmp;
-        for (float i = 0 ; i<2.5;i = i + 0.50){
-			tmp = helpShade(ray,curLight, 5,i);
-			ray.col[0] += tmp[0];
-			ray.col[1] += tmp[1];
-			ray.col[2] += tmp[2];
-			/*
-			 * _rbuffer[i*width+j] += int(col[0]*255*coef);
-				_gbuffer[i*width+j] += int(col[1]*255*coef);
-				_bbuffer[i*width+j] += int(col[2]*255*coef);
-					*/
-		}
-		curLight = curLight->next;
-    }
+
+				/* FROM TUTORIAL:
+				make a ray with origin ray.intersection.point + 0.01 * dir
+				and dir (light.position - ray.intersection.point).normalize;
+				get intersections -> object in shadow if intersection occurs
+				before the light*/
+				/* FROM TEXTBOOK:
+				function raycolor( ray e + td, real t0, real t1 )
+				hit-record rec, srec
+					if (scene→hit(e + td, t0, t1, rec)) then
+					p = e + (rec.t) d
+					color c = rec.ka Ia
+					if (not scene→hit(p + sl, ε, ∞, srec)) then
+						vector3 h = normalized(normalized(l) + normalized(−d))
+						c = c + rec.kd I max (0, rec.n · l) + (rec.ks) I (rec.n · h)rec.p
+						return c
+					else
+						return background-color*/
+
+				Ray3D newRay;
+				newRay.dir = curLight->light->get_position() - ray.intersection.point;
+				double t = newRay.dir.length();
+				newRay.dir.normalize();
+				newRay.origin = ray.intersection.point + 0.01 * newRay.dir;
+
+				traverseScene(_root, newRay);
+
+				curLight->light->shade(ray);
+				if (!newRay.intersection.none){
+						ray.col = 0.5 * ray.col; // if in shadow, darken
+						ray.col.clamp();
+				}
+				curLight = curLight->next;
+		    }
 }
 
 void Raytracer::initPixelBuffer() {
-    int numbytes = _scrWidth * _scrHeight * sizeof(unsigned char);
-	_rbuffer = new unsigned char[numbytes];
-	_gbuffer = new unsigned char[numbytes];
-	_bbuffer = new unsigned char[numbytes];
-	for (int i = 0; i < _scrHeight; i++) {
-		for (int j = 0; j < _scrWidth; j++) {
-			_rbuffer[i*_scrWidth+j] = 0;
-			_gbuffer[i*_scrWidth+j] = 0;
-			_bbuffer[i*_scrWidth+j] = 0;
-		}
-	}
+	int numbytes = _scrWidth * _scrHeight * sizeof(unsigned char);
+	 _rbuffer = new unsigned char[numbytes];
+	 std::fill_n(_rbuffer, numbytes,0);
+	 _gbuffer = new unsigned char[numbytes];
+	 std::fill_n(_gbuffer, numbytes,0);
+	 _bbuffer = new unsigned char[numbytes];
+	 std::fill_n(_bbuffer, numbytes,0);
 }
 
 void Raytracer::flushPixelBuffer( std::string file_name ) {
@@ -294,7 +285,6 @@ Colour Raytracer::shadeRay( Ray3D& ray ) {
 				Vector3D reflection_dir = ray_dir - (2 * ray_dir.dot(ray_norm) * ray_norm);
 				reflection_dir.normalize();
 
-
 				Ray3D newRay;
 				newRay.origin = ray_intersect;
 				newRay.dir = reflection_dir;
@@ -305,10 +295,11 @@ Colour Raytracer::shadeRay( Ray3D& ray ) {
 				if (newRay.intersection.t_value > 0.0) {
 	        // the damp factor is based on distance
 					float dampFactor = fabs(1 /newRay.intersection.t_value); // TODO: is this the right way to get damp factor?
+					// side note: damp factor for perfectly reflective is 0, but we don't
+					// have any perfectly reflective surfaces....
 					if (dampFactor < 0) dampFactor = 0;
-					if (dampFactor >= 1) dampFactor = 1;
-					// Set colour to include reflection
-					col = ray.col + dampFactor*newRay.col;
+					if (dampFactor > 1) dampFactor = 1;
+					col = ray.col + dampFactor * newRay.col;
 	      }
 
 
