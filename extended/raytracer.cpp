@@ -306,37 +306,35 @@ Colour Raytracer::shadeRay( Ray3D& ray ) {
 			}
 
 			// handle refraction
-			if(ray.intersection.mat->refract_index > 0){
-				Point3D ray_origin = ray.intersection.point;
-        Vector3D ray_dir = ray.dir;
-        Vector3D ray_norm = ray.intersection.normal;
-				ray_norm.normalize();
-				ray_dir.normalize();
-
-				// http://www.cosinekitty.com/raytrace/chapter09_refraction.html
-				float nDotDir = ray_dir.dot(ray_norm);
-				float sinIn = sqrt(1 - nDotDir*nDotDir);;
- 				double ind1, ind2;
-				double  sinOut, cosOut;
-				double refract_ratio = nDotDir < 0? 1 / ray.intersection.mat->refract_index : ray.intersection.mat->refract_index;
-				double sinT2 = refract_ratio * refract_ratio * (1.0 - nDotDir * nDotDir);
-				double cosT = sqrt(1.0 - sinT2);
-				std::cout<<sinT2<< std::endl;
-					Vector3D refraction_dir = refract_ratio * ray_dir + ( refract_ratio * nDotDir - cosT) * ray_norm;
-					refraction_dir.normalize();
-
-					Ray3D newRay;
-					newRay.origin = ray_origin + 0.01 * ray_dir;
-					newRay.dir = refraction_dir;
-
-					// calculate shade of reflected ray
-					shadeRay(newRay);
-					Colour refraction_colour = shadeRay(newRay);
-					if(!newRay.intersection.none) col = col + ray.intersection.mat->opacity *newRay.col;
-
-
-
-		}
+		// 	if(ray.intersection.mat->refract_index > 0){
+		// 		Point3D ray_origin = ray.intersection.point;
+    //     Vector3D ray_dir = ray.dir;
+    //     Vector3D ray_norm = ray.intersection.normal;
+		// 		ray_norm.normalize();
+		// 		ray_dir.normalize();
+		//
+		// 		// http://www.cosinekitty.com/raytrace/chapter09_refraction.html
+		// 		double cos1 = ray_norm.dot(ray_dir);
+		// 		double refract_ratio = 1 / ray.intersection.mat->refract_index;
+		// 		double sin1 = 1 - cos1 * cos1;
+		// 		double sin2 = refract_ratio * refract_ratio * (1.0 - cos1 * cos1);
+		// 		if (sin2 <= 1){
+		// 			double cos2 = sqrt(1.0 - sin2);
+		//
+		// 			Vector3D ray_dir2 = (ray_dir - cos1 * ray_norm);
+		// 			Vector3D refraction_dir = refract_ratio * ray_dir2 - cos2 * ray_norm;
+		// 			refraction_dir.normalize();
+		//
+		// 			Ray3D newRay;
+		// 			newRay.origin = ray_origin;
+		// 			newRay.dir = refraction_dir;
+		//
+		// 			// calculate shade of reflected ray
+		// 			shadeRay(newRay);
+		// 			if(!newRay.intersection.none) col = col + ray.intersection.mat->opacity *newRay.col;
+		//
+		// 		}
+		// }
 
 			col.clamp();
 
@@ -358,34 +356,42 @@ void Raytracer::render( int width, int height, Point3D eye, Vector3D view,
     // Construct a ray for each pixel.
     for (int i = 0; i < _scrHeight; i++) {
       for (int j = 0; j < _scrWidth; j++) {
-        // Sets up ray origin and direction in view space,
-        // image plane is at z = -1.
-        Point3D origin(0., 0., 0.);
-				Point3D imagePlane;
-				imagePlane[0] = (-double(width)/2 + 0.5 + j)/factor;
-				imagePlane[1] = (-double(height)/2 + 0.5 + i)/factor;
-				imagePlane[2] = -1;
+				/*
+				TEXTBOOK: 
+				for each pixel (i, j) do c=0
+				for p = 0 to n − 1 do for q = 0 to n − 1 do
+				c = c + ray-color(i + (p + 0.5)/n, j + (q + 0.5)/n) cij = c/n2
+				*/
+			 for(float p = i; p < i + 1.0f; p += 0.5f){
+				for(float q = j; q < j + 1.0f; q += 0.5f){
+							// Sets up ray origin and direction in view space, image plane is at z = -1.
+		        Point3D origin(0., 0., 0.);
+						Point3D imagePlane;
+						imagePlane[0] = (-double(width)/2 + 0.5 + p)/factor;
+						imagePlane[1] = (-double(height)/2 + 0.5 + q)/factor;
+						imagePlane[2] = -1;
 
-				// TODO: Convert ray to world space and call
-				// shadeRay(ray) to generate pixel colour.
+						// TODO: Convert ray to world space and call
+						// shadeRay(ray) to generate pixel colour.
 
-				Point3D rayOriginWorld = viewToWorld * imagePlane;
-				Vector3D rayDir = imagePlane - origin;
-				Vector3D rayDirWorld = viewToWorld * rayDir;
+						Point3D rayOriginWorld = viewToWorld * imagePlane;
+						Vector3D rayDir = imagePlane - origin;
+						Vector3D rayDirWorld = viewToWorld * rayDir;
 
-				Ray3D ray;
+						Ray3D ray;
 
-				ray.origin = rayOriginWorld;
-				ray.dir = rayDirWorld;
-				ray.dir.normalize();
+						ray.origin = rayOriginWorld;
+						ray.dir = rayDirWorld;
+						ray.dir.normalize();
 
-				Colour col = shadeRay(ray);
+						Colour col = shadeRay(ray);
 
-				_rbuffer[i*width+j] = int(col[0]*255);
-				_gbuffer[i*width+j] = int(col[1]*255);
-				_bbuffer[i*width+j] = int(col[2]*255);
+						_rbuffer[i*width+j] += int(col[0]*255*.25);
+						_gbuffer[i*width+j] += int(col[1]*255*.25);
+						_bbuffer[i*width+j] += int(col[2]*255*.25);
+					}
+				}
 			}
 		}
-
 	flushPixelBuffer(fileName);
 }

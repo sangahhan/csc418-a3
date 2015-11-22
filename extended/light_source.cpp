@@ -21,7 +21,7 @@ void PointLight::shade( Ray3D& ray ) {
 	// before this function.
 
    //intersection normal
-	Vector3D N = ray.intersection.normal;
+		Vector3D N = ray.intersection.normal;
     N.normalize();
 
     //intersection point to light vector normal

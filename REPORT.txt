@@ -32,7 +32,7 @@ together to produce Phong shading.
 
 --
 
-Advanced Ray Tracer
+Advanced Ray Tracer -- found in /extended folder.
 
 Specular reflections - Sang-Ah Han
 Shadow code is in raytracer.cpp, in the shadeRay function. We used notes from
@@ -53,7 +53,11 @@ cylinder is in scene_object.cpp's UnitCylinder::intersect. Sang-Ah wrote the
 code to check for intersection around the quadric area of the cylinder. Li wrote
 the code to check for intersection at the caps of the cylinder.
 
-Refraction - Sang-Ah Han
+Anti-aliasing - Sang-Ah Han
+Code for anti-aliasing is found in raytracer.cpp's Raytracer::render. We used
+notes from http://www.ics.uci.edu/~gopi/CS211B/RayTracing%20tutorial.pdf to
+change the ray construction loop, so that the resulting colour is an average of
+4 samples.
 
 Soft shadows OR Glossy reflection - Sang-Ah Han
 
