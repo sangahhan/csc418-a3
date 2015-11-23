@@ -78,7 +78,7 @@ that are at a "jittered" position (a random position near the original ray's
 position).  If these rays intersect, then we also multiply the original ray by
 the damp factor.
 - Look for "TODO: GLOSSY REFLECT"
-- Renders: glossy_reflect{1,2,3}.bmp -- using 10 rays
+- Renders: glossy_reflect{1,2,3}.bmp -- using 4 rays
 
 Texture mapping - Li Wan
 

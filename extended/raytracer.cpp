@@ -335,7 +335,8 @@ Colour Raytracer::shadeRay( Ray3D& ray ) {
 			// }
 
 			// TODO: GLOSSY REFLECT
-			int n = 10;
+			int n = 4;
+			int rays = 0;
 			Vector3D ray_dir = ray.dir;
 			Vector3D ray_norm = ray.intersection.normal;
 			ray_norm.normalize();
@@ -353,7 +354,6 @@ Colour Raytracer::shadeRay( Ray3D& ray ) {
 				Point3D ray_intersect = ray.intersection.point + jitter1 * axis1 + jitter2 * axis2;
 				newRay.origin = ray_intersect;
 
-
 				shadeRay(newRay);
 				if (newRay.intersection.t_value > 0.0) {
 	        // the damp factor is based on distance
@@ -362,8 +362,8 @@ Colour Raytracer::shadeRay( Ray3D& ray ) {
 					// have any perfectly reflective surfaces....
 					if (dampFactor < 0) dampFactor = 0;
 					if (dampFactor > 1) dampFactor = 1;
-					col = col + dampFactor * newRay.col;
-					break;
+					rays ++;
+					col = col + ((dampFactor/n) * newRay.col);
 	      }
 			}
 			col.clamp();
@@ -388,7 +388,7 @@ void Raytracer::render( int width, int height, Point3D eye, Vector3D view,
     // Construct a ray for each pixel.
     for (int i = 0; i < _scrHeight; i++) {
       for (int j = 0; j < _scrWidth; j++) {
-				//TODO: ANTIALIAS"
+				//TODO: ANTIALIAS
 				/*
 				TEXTBOOK:
 				for each pixel (i, j) do c=0
@@ -420,9 +420,9 @@ void Raytracer::render( int width, int height, Point3D eye, Vector3D view,
 						Colour col = shadeRay(ray);
 
 						// reduce contribution of rays to 1/4
-						_rbuffer[i*width+j] = int(col[0]*255);
-						_gbuffer[i*width+j] = int(col[1]*255);
-						_bbuffer[i*width+j] = int(col[2]*225);
+						_rbuffer[i*width+j] += int(col[0]*255*0.25);
+						_gbuffer[i*width+j] += int(col[1]*255*0.25);
+						_bbuffer[i*width+j] += int(col[2]*255*0.25);
 					}
 				}
 			}
