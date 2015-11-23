@@ -29,10 +29,6 @@ Part d. - Li Wan
 Phong shading code is in light_source.cpp. We used the lecture slides' guide to
 find the values for diffuse, specular and ambient colours, and added them all
 together to produce Phong shading.
-- The rendering for the scene signature is in signature1.bmp and signature2.bmp
-- The rendering for the diffuse + affine components are in diffuse_ambient1.bmp
-    and diffuse_ambient2.bmp
-- The rendering for the Phong model are in phong1.bmp and phong2.bmp
 
 --
 
@@ -44,12 +40,14 @@ tutorial and from the textbook to construct a "reflection ray". If there was an
 intersection with the "reflection ray", then we added shadeRay(REFLECTION RAY)
 * DAMP FACTOR to the intersection's colour, where DAMP FACTOR is a factor based
 on the distance of the intersection.
+- Look for "TODO: REFLECTION"
 
 Shadows - Sang-Ah Han
 Similarly to the specular reflections, we used tutorial notes and textbook notes
 to construct a "shadow ray". If there was an intersection with the "reflection
 ray", then we added 0.5 * the intersection's colour to the intersection's colour
-(to make it darker).
+(to make it darker). This is done in raytracer.cpp's Raytracer::computeShading.
+- Look for "TODO: SHADOWS" -- should be commented out
 
 Non-trivial objects - Sang-Ah Han & Li Wan
 We drew a cylinder in our ray-tracing program. The most amount of code for this
@@ -62,8 +60,17 @@ Code for anti-aliasing is found in raytracer.cpp's Raytracer::render. We used
 notes from http://www.ics.uci.edu/~gopi/CS211B/RayTracing%20tutorial.pdf to
 change the ray construction loop, so that the resulting colour is an average of
 4 samples.
+- Look for "TODO: ANTIALIAS"
 
-Soft shadows OR Glossy reflection - Sang-Ah Han
+Soft shadows - Sang-Ah Han
+We replace the shadow code with soft shadow code in raytracer.cpp's function
+Raytracer::computeShading. Instead of looking for one ray, we cast multiple rays
+that are at a "jittered" position (a random position near the original ray's
+position).  
+- Look for "TODO: SOFT SHADOW"
+
+Glossy reflection - Sang-Ah Han
+- Look for "TODO: GLOSSY REFLECT"
 
 Texture mapping - Li Wan
 

@@ -198,6 +198,7 @@ void Raytracer::traverseScene( SceneDagNode::Ptr node, Ray3D& ray ) {
 
 void Raytracer::computeShading( Ray3D& ray ) {
     LightListNode::Ptr curLight = _lightSource;
+
     for (;;) {
         if (curLight == nullptr) break;
         // Each lightSource provides its own shading function.
@@ -221,22 +222,51 @@ void Raytracer::computeShading( Ray3D& ray ) {
 						return c
 					else
 						return background-color*/
+				// // TODO: SHADOWS
+				// Ray3D newRay;
+				// newRay.dir = curLight->light->get_position() - ray.intersection.point;
+				// double t = newRay.dir.length();
+				// newRay.dir.normalize();
+				// newRay.origin = ray.intersection.point + 0.01 * newRay.dir;
+				//
+				// traverseScene(_root, newRay);
+				//
+				// curLight->light->shade(ray);
+				// if (!newRay.intersection.none && t >= newRay.intersection.t_value){
+				// 		ray.col = 0.5 * ray.col; // if in shadow, darken
+				// 		ray.col.clamp();
+				// }
+				//curLight = curLight->next;
+		    //}
+				//end hard shadow code
 
-				Ray3D newRay;
-				newRay.dir = curLight->light->get_position() - ray.intersection.point;
-				double t = newRay.dir.length();
-				newRay.dir.normalize();
-				newRay.origin = ray.intersection.point + 0.01 * newRay.dir;
 
-				traverseScene(_root, newRay);
+				// TODO: SOFT SHADOW
+    		int n = 30;
+				//Colour sum(0., 0., 0.);
+				for (int i = 0; i < n; i++) {
 
-				curLight->light->shade(ray);
-				if (!newRay.intersection.none && t >= newRay.intersection.t_value){
-						ray.col = 0.5 * ray.col; // if in shadow, darken
-						ray.col.clamp();
-				}
+						double jitter1 = (double)rand() / (double) RAND_MAX;
+						double jitter2 = (double)rand() / (double) RAND_MAX;
+						Vector3D axis1 (0., 3., 0.);
+						Vector3D axis2 (0., 0., 3.);
+
+						Ray3D newRay;
+						Point3D lightPos = curLight->light->get_position() + jitter1 * axis1 + jitter2 * axis2;
+						newRay.dir = lightPos - ray.intersection.point;
+						newRay.dir.normalize();
+						newRay.origin = ray.intersection.point + 0.01 * newRay.dir;
+
+						traverseScene(_root, newRay);
+						curLight->light->shade(ray);
+						if (!newRay.intersection.none) {
+							ray.col =  0.5 * ray.col;
+	          }
+	      }
+				ray.col.clamp();
 				curLight = curLight->next;
-		    }
+	}
+
 }
 
 void Raytracer::initPixelBuffer() {
@@ -268,6 +298,7 @@ Colour Raytracer::shadeRay( Ray3D& ray ) {
 			// You'll want to call shadeRay recursively (with a different ray,
 			// of course) here to implement reflection/refraction effects.
 
+			//TODO: REFLECTION
 			// FROM TUTORIAL:
 			/* if we bounce the ray off the surface and see what it hits, we
 			have a reflection. the new ray's origin is ray.intersection.point
@@ -301,46 +332,15 @@ Colour Raytracer::shadeRay( Ray3D& ray ) {
 					if (dampFactor > 1) dampFactor = 1;
 					col = col + dampFactor * newRay.col;
 	      }
-
-
 			}
-
-			// handle refraction
-		// 	if(ray.intersection.mat->refract_index > 0){
-		// 		Point3D ray_origin = ray.intersection.point;
-    //     Vector3D ray_dir = ray.dir;
-    //     Vector3D ray_norm = ray.intersection.normal;
-		// 		ray_norm.normalize();
-		// 		ray_dir.normalize();
-		//
-		// 		// http://www.cosinekitty.com/raytrace/chapter09_refraction.html
-		// 		double cos1 = ray_norm.dot(ray_dir);
-		// 		double refract_ratio = 1 / ray.intersection.mat->refract_index;
-		// 		double sin1 = 1 - cos1 * cos1;
-		// 		double sin2 = refract_ratio * refract_ratio * (1.0 - cos1 * cos1);
-		// 		if (sin2 <= 1){
-		// 			double cos2 = sqrt(1.0 - sin2);
-		//
-		// 			Vector3D ray_dir2 = (ray_dir - cos1 * ray_norm);
-		// 			Vector3D refraction_dir = refract_ratio * ray_dir2 - cos2 * ray_norm;
-		// 			refraction_dir.normalize();
-		//
-		// 			Ray3D newRay;
-		// 			newRay.origin = ray_origin;
-		// 			newRay.dir = refraction_dir;
-		//
-		// 			// calculate shade of reflected ray
-		// 			shadeRay(newRay);
-		// 			if(!newRay.intersection.none) col = col + ray.intersection.mat->opacity *newRay.col;
-		//
-		// 		}
-		// }
 
 			col.clamp();
 
 		}
     return col;
 }
+
+
 
 void Raytracer::render( int width, int height, Point3D eye, Vector3D view,
         Vector3D up, double fov, std::string fileName ) {
@@ -356,8 +356,9 @@ void Raytracer::render( int width, int height, Point3D eye, Vector3D view,
     // Construct a ray for each pixel.
     for (int i = 0; i < _scrHeight; i++) {
       for (int j = 0; j < _scrWidth; j++) {
+				//TODO: ANTIALIAS"
 				/*
-				TEXTBOOK: 
+				TEXTBOOK:
 				for each pixel (i, j) do c=0
 				for p = 0 to n − 1 do for q = 0 to n − 1 do
 				c = c + ray-color(i + (p + 0.5)/n, j + (q + 0.5)/n) cij = c/n2
@@ -386,6 +387,7 @@ void Raytracer::render( int width, int height, Point3D eye, Vector3D view,
 
 						Colour col = shadeRay(ray);
 
+						// reduce contribution of rays to 1/4
 						_rbuffer[i*width+j] += int(col[0]*255*.25);
 						_gbuffer[i*width+j] += int(col[1]*255*.25);
 						_bbuffer[i*width+j] += int(col[2]*255*.25);
