@@ -33,6 +33,10 @@ together to produce Phong shading.
 --
 
 Advanced Ray Tracer -- found in /extended folder.
+The renders for the advanced ray tracer use a more enlarged plane than the
+basic version. The renders for each individual feature listed can be found in
+the renders/ folder. The renders for the final ray tracer are view{1,2,3}.bmp
+
 
 Specular reflections - Sang-Ah Han
 Shadow code is in raytracer.cpp, in the shadeRay function. We used notes from
@@ -41,6 +45,7 @@ intersection with the "reflection ray", then we added shadeRay(REFLECTION RAY)
 * DAMP FACTOR to the intersection's colour, where DAMP FACTOR is a factor based
 on the distance of the intersection.
 - Look for "TODO: REFLECTION"
+- Renders: reflect{1,2,3}.bmp
 
 Shadows - Sang-Ah Han
 Similarly to the specular reflections, we used tutorial notes and textbook notes
@@ -48,12 +53,7 @@ to construct a "shadow ray". If there was an intersection with the "reflection
 ray", then we added 0.5 * the intersection's colour to the intersection's colour
 (to make it darker). This is done in raytracer.cpp's Raytracer::computeShading.
 - Look for "TODO: SHADOWS" -- should be commented out
-
-Non-trivial objects - Sang-Ah Han & Li Wan
-We drew a cylinder in our ray-tracing program. The most amount of code for this
-cylinder is in scene_object.cpp's UnitCylinder::intersect. Sang-Ah wrote the
-code to check for intersection around the quadric area of the cylinder. Li wrote
-the code to check for intersection at the caps of the cylinder.
+- Renders: shadow{1,2,3}.bmp
 
 Anti-aliasing - Sang-Ah Han
 Code for anti-aliasing is found in raytracer.cpp's Raytracer::render. We used
@@ -61,17 +61,31 @@ notes from http://www.ics.uci.edu/~gopi/CS211B/RayTracing%20tutorial.pdf to
 change the ray construction loop, so that the resulting colour is an average of
 4 samples.
 - Look for "TODO: ANTIALIAS"
+- Renders: antialias{1,2,3}.bmp
 
 Soft shadows - Sang-Ah Han
 We replace the shadow code with soft shadow code in raytracer.cpp's function
 Raytracer::computeShading. Instead of looking for one ray, we cast multiple rays
 that are at a "jittered" position (a random position near the original ray's
-position).  
+position).  If these rays intersect, then we also half the original ray.
 - Look for "TODO: SOFT SHADOW"
+- Renders: soft_shadow{1,2,3}.bmp -- using 30 rays
 
 Glossy reflection - Sang-Ah Han
+We replace the reflection code with soft shadow code in raytracer.cpp's function
+Raytracer::shadeRay. Instead of looking for one ray, we cast multiple rays
+that are at a "jittered" position (a random position near the original ray's
+position).  If these rays intersect, then we also multiply the original ray by
+the damp factor.
 - Look for "TODO: GLOSSY REFLECT"
+- Renders: glossy_reflect{1,2,3}.bmp -- using 10 rays
 
 Texture mapping - Li Wan
 
 Environment mapping - Li Wan
+
+Non-trivial objects - Sang-Ah Han & Li Wan
+We drew a cylinder in our ray-tracing program. The most amount of code for this
+cylinder is in scene_object.cpp's UnitCylinder::intersect. Sang-Ah wrote the
+code to check for intersection around the quadric area of the cylinder. Li wrote
+the code to check for intersection at the caps of the cylinder.
