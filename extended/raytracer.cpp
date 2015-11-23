@@ -405,7 +405,7 @@ void Raytracer::render( int width, int height, Point3D eye, Vector3D view,
 				*/
 			 for(float p = i; p < i + 1.0f; p += 0.5f){
 				for(float q = j; q < j + 1.0f; q += 0.5f){
-							// Sets up ray origin and direction in view space, image plane is at z = -1.
+						// Sets up ray origin and direction in view space, image plane is at z = -1.
 		        Point3D origin(0., 0., 0.);
 						Point3D imagePlane;
 						imagePlane[0] = (-double(width)/2 + 0.5 + p)/factor;
@@ -415,6 +415,7 @@ void Raytracer::render( int width, int height, Point3D eye, Vector3D view,
 						// TODO: Convert ray to world space and call
 						// shadeRay(ray) to generate pixel colour.
 
+						// ray -> world space
 						Point3D rayOriginWorld = viewToWorld * imagePlane;
 						Vector3D rayDir = imagePlane - origin;
 						Vector3D rayDirWorld = viewToWorld * rayDir;
@@ -425,6 +426,7 @@ void Raytracer::render( int width, int height, Point3D eye, Vector3D view,
 						ray.dir = rayDirWorld;
 						ray.dir.normalize();
 
+						// generate pixel colour
 						Colour col = shadeRay(ray);
 
 						// reduce contribution of rays to 1/4

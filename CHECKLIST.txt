@@ -2,53 +2,59 @@
 Assignment 3 Checklist/Grading sheet
 -------------------------------------
 
-Name: 
-Student ID:
+Name: Sang-Ah Han
+Student ID: 998867418
 
 -----------------------------------------------------------------------------------------
 A. PLEASE ANSWER THE FOLLOWING QUESTIONS (your assignment will not be graded otherwise!)
 
-  
-1. I verify that I completed this assignment according to the 
-   Academic Honesty policy stated in 
+
+1. I verify that I completed this assignment according to the
+   Academic Honesty policy stated in
    http://www.cs.toronto.edu/~kyros/courses/418/policy.2010f.html
 
-   ___Yes   ___No
+   _x_Yes   ___No
 
 
-2. I collaborated on this assignment with another student 
+2. I collaborated on this assignment with another student
    (see http://www.cs.toronto.edu/~kyros/courses/418/policy.2010f.html for
     policy on assignments done in collaboration)
 
-   ___Yes   ___No
+   _x_Yes   ___No
 
    If you checked yes, please supply the following
 
-       Student name: 
+       Student name: Li Wan
+       Student ID: 998801088
        Portion(s) of assignment completed by that student (see checklist below)
+       - Part 1d
+       - Features in Part 2:
+          - texture mapping
+          - environment mapping
+
 
 -----------------------------------------------------------------------------------------
 
 B. PLACE AN (X) IN FRONT OF PORTIONS OF THE ASSIGNMENT THAT YOU COMPLETED IN FULL.
-   
-   If a portion of the assignment was not completed fully, please provide 
+
+   If a portion of the assignment was not completed fully, please provide
    additional information so that we can determine whether or not you are eligible
    for partial credit. THE MORE INFORMATION YOU SUPPLY (EG. FILE WHICH CONTAINS
-   PARTIAL CODE, FUNCTION NAME, ETC, SUGGESTIONS ON WHERE AND WHAT TO LOOK FOR IN 
-   YOUR PARTIAL IMPLEMENTATION, DETAILED COMMENTS IN YOUR CODE, ETC) THE MORE LIKELY IT IS 
+   PARTIAL CODE, FUNCTION NAME, ETC, SUGGESTIONS ON WHERE AND WHAT TO LOOK FOR IN
+   YOUR PARTIAL IMPLEMENTATION, DETAILED COMMENTS IN YOUR CODE, ETC) THE MORE LIKELY IT IS
    WE WILL BE ABLE TO MAKE AN ACCURATE ASSESSMENT
 
-   
-___   (10 points) Part 1a     Ray casting
-                  
-___   (20 points) Part 1b     Ray-sphere intersection
 
-___   (15 points) Part 1c     Ray-square intersection
+_x_   (10 points) Part 1a     Ray casting
 
-___   (15 points) Part 1d     Phong shading (ambient, diffuse, and specular components)
-                  
-___   ( 5 points) Part 1e     Coding style
+_x_   (20 points) Part 1b     Ray-sphere intersection
 
-___   (10 points) Part 1f     Written report
+_x_   (15 points) Part 1c     Ray-square intersection
 
--------------------------------------------------------------------------------- 
+_x_   (15 points) Part 1d     Phong shading (ambient, diffuse, and specular components)
+
+_x_   ( 5 points) Part 1e     Coding style
+
+_x_   (10 points) Part 1f     Written report
+
+--------------------------------------------------------------------------------
