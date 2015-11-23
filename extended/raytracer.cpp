@@ -223,6 +223,7 @@ void Raytracer::computeShading( Ray3D& ray ) {
 					else
 						return background-color*/
 				// // TODO: SHADOWS
+				// // set up shadow ray
 				// Ray3D newRay;
 				// newRay.dir = curLight->light->get_position() - ray.intersection.point;
 				// double t = newRay.dir.length();
@@ -245,7 +246,7 @@ void Raytracer::computeShading( Ray3D& ray ) {
     		int n = 30;
 				//Colour sum(0., 0., 0.);
 				for (int i = 0; i < n; i++) {
-
+						// set up sample shadow rays
 						double jitter1 = (double)rand() / (double) RAND_MAX;
 						double jitter2 = (double)rand() / (double) RAND_MAX;
 						Vector3D axis1 (0., 3., 0.);
@@ -255,10 +256,12 @@ void Raytracer::computeShading( Ray3D& ray ) {
 						Point3D lightPos = curLight->light->get_position() + jitter1 * axis1 + jitter2 * axis2;
 						newRay.dir = lightPos - ray.intersection.point;
 						newRay.dir.normalize();
+						// avoid intersection with some object
 						newRay.origin = ray.intersection.point + 0.01 * newRay.dir;
 
 						traverseScene(_root, newRay);
 						curLight->light->shade(ray);
+						// if sample shadow rays intersect, shade the original ray
 						if (!newRay.intersection.none) {
 							ray.col =  0.5 * ray.col;
 	          }
@@ -309,9 +312,10 @@ Colour Raytracer::shadeRay( Ray3D& ray ) {
 			where the damp factor is based on distance
 			only bounce if the matieral is reflective and don't bounce infinitely*/
   		// if(ray.intersection.mat->specular_exp > 0){
+			//  // set up reflection ray
 			// 	Point3D ray_intersect = ray.intersection.point;
-      //   Vector3D ray_dir = ray.dir;
-      //   Vector3D ray_norm = ray.intersection.normal;
+      //  Vector3D ray_dir = ray.dir;
+      //  Vector3D ray_norm = ray.intersection.normal;
 			// 	ray_norm.normalize();
 			// 	Vector3D reflection_dir = ray_dir - (2 * ray_dir.dot(ray_norm) * ray_norm);
 			// 	reflection_dir.normalize();
@@ -321,11 +325,11 @@ Colour Raytracer::shadeRay( Ray3D& ray ) {
 			// 	newRay.dir = reflection_dir;
 			//
 			// 	// calculate shade of reflected ray
-	    //   shadeRay(newRay);
+	    //  shadeRay(newRay);
 			//
 			// 	if (newRay.intersection.t_value > 0.0) {
-	    //     // the damp factor is based on distance
-			// 		float dampFactor = fabs(1 /newRay.intersection.t_value); // TODO: is this the right way to get damp factor?
+	    //    // the damp factor is based on distance
+			// 		float dampFactor = fabs(1 /newRay.intersection.t_value); // is this the right way to get damp factor?
 			// 		// side note: damp factor for perfectly reflective is 0, but we don't
 			// 		// have any perfectly reflective surfaces....
 			// 		if (dampFactor < 0) dampFactor = 0;
@@ -337,6 +341,8 @@ Colour Raytracer::shadeRay( Ray3D& ray ) {
 			// TODO: GLOSSY REFLECT
 			int n = 4;
 			int rays = 0;
+
+			// set up reflection ray
 			Vector3D ray_dir = ray.dir;
 			Vector3D ray_norm = ray.intersection.normal;
 			ray_norm.normalize();
@@ -351,18 +357,20 @@ Colour Raytracer::shadeRay( Ray3D& ray ) {
 				Vector3D axis1 (0., 1., 0.);
 				Vector3D axis2 (0., 0., 1.);
 
+				// jitter the reflection ray
 				Point3D ray_intersect = ray.intersection.point + jitter1 * axis1 + jitter2 * axis2;
 				newRay.origin = ray_intersect;
 
 				shadeRay(newRay);
 				if (newRay.intersection.t_value > 0.0) {
 	        // the damp factor is based on distance
-					float dampFactor = fabs(1 /newRay.intersection.t_value); // TODO: is this the right way to get damp factor?
+					float dampFactor = fabs(1 /newRay.intersection.t_value); // is this the right way to get damp factor?
 					// side note: damp factor for perfectly reflective is 0, but we don't
 					// have any perfectly reflective surfaces....
 					if (dampFactor < 0) dampFactor = 0;
 					if (dampFactor > 1) dampFactor = 1;
 					rays ++;
+					// result: col + a weighted average of dampened colours
 					col = col + ((dampFactor/n) * newRay.col);
 	      }
 			}

@@ -42,12 +42,11 @@ bool UnitSquare::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 	if (xCheckRange && yCheckRange){
 		// then there is an intersection
 		if (ray.intersection.none || ray.intersection.t_value > t){
-			// set normals, set point in world coords
+			// set normals, set point in world coords as ray's intersection
 			Point3D point(xCheck, yCheck, 0.0);
 			Vector3D norm(0.0f, 0.0f, 1.0f);
 			norm.normalize();
 			Vector3D newNormal = transNorm(worldToModel, norm);
-			//newNormal.normalize();
 			ray.intersection.t_value = t;
 			ray.intersection.point = modelToWorld * point;
 			ray.intersection.normal = newNormal;
@@ -91,19 +90,20 @@ bool UnitSphere::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 
 	// negative discriminant --> ray doesn't intersect
 	if (d < 0) return false;
-	else if (d == 0) t = -b / a;
+	else if (d == 0) t = -b / a; // one intersection only; ray grazes sphere
   else {
 		float lambda0 = (-b + sqrt(d))/ a;
 	  float lambda1 = (-b - sqrt(d))/ a;
-		t = fmin(lambda0, lambda1);
+		t = fmin(lambda0, lambda1); // two intersection
 	}
 
 	if (t <= 0) return false;
+
 	// update the given ray
 	if (ray.intersection.none || ray.intersection.t_value > t) {
+			// set normals, set point in world coords as ray's intersection
 			Point3D point = newRay.origin + t * newRay.dir;
 			Vector3D norm = 2 * (point - centre);
-			//norm.normalize();
 			Vector3D newNormal = transNorm(worldToModel, norm);
 			newNormal.normalize();
 			ray.intersection.t_value = t;
