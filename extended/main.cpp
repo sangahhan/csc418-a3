@@ -40,28 +40,40 @@ int main(int argc, char* argv[])
     Material::Ptr jade = std::make_shared<Material>( Colour(0, 0, 0), Colour(0.54, 0.89, 0.63),
 			Colour(0.316228, 0.316228, 0.316228),
 			12.8 );
+    Material::Ptr glass = std::make_shared<Material>( Colour(0.001, 0.001, 0.001), Colour(0., 0., 0.),
+			Colour(0.999, 0.999, 0.999),
+			10000 );
 
 	// Defines a point light source.
 	raytracer.addLightSource( std::make_shared<PointLight>(Point3D(0., 0., 5.),
 				Colour(0.9, 0.9, 0.9) ) );
 
 	// Add a unit square into the scene with material mat.
-    SceneDagNode::Ptr sphere = raytracer.addObject( std::make_shared<UnitSphere>(), gold );
-		SceneDagNode::Ptr cylinder = raytracer.addObject( std::make_shared<UnitCylinder>(), gold );
+    SceneDagNode::Ptr sphere = raytracer.addObject( std::make_shared<UnitSphere>(), glass );
+		//SceneDagNode::Ptr cylinder = raytracer.addObject( std::make_shared<UnitCylinder>(), gold );
 		//SceneDagNode::Ptr plane2 = raytracer.addObject( std::make_shared<UnitSquare>(), jade );
     SceneDagNode::Ptr plane = raytracer.addObject( std::make_shared<UnitSquare>(), jade );
+    //SceneDagNode::Ptr glassSphere = raytracer.addObject( std::make_shared<UnitSphere>(), glass );
 
+    
 	// Apply some transformations to the unit square.
 	double factor1[3] = { 1.0, 2.0, 1.0 };
 	double factor2[3] = { 7.5, 7.5, 7.5 };
+	double factor3[3] = { 2.0, 2.0, 2.0 };
 	//raytracer.translate(sphere, Vector3D(0., 0., 0.));
 	//raytracer.rotate(sphere, 'x', -45);
 	//raytracer.rotate(sphere, 'z', 45);
 	//raytracer.scale(sphere, Point3D(0., 0., 0.), factor1);
 
-	raytracer.translate(cylinder, Vector3D(-1., -2., -2.));
-	//raytracer.rotate(cylinder, 'x', -90);
-	//raytracer.rotate(cylinder, 'z', 90);
+	//raytracer.translate(glassSphere, Vector3D(1, -0.9, -0.5));
+	//raytracer.scale(glassSphere, Point3D(0, 0, 0), factor1);
+
+
+
+	raytracer.translate(cylinder, Vector3D(0., 5., -5.));
+	raytracer.rotate(cylinder, 'x', -90);
+    raytracer.rotate(cylinder, 'z', 90);
+	raytracer.scale(cylinder, Point3D(0., 0., 0.), factor1);
 
 	// Apply some transformations to the unit square.
 	raytracer.translate(sphere, Vector3D(0., 0., -5.));
