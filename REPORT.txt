@@ -25,7 +25,7 @@ in front of the ray, we set it that point to be the ray's intersection. We found
 the a, b, c values (quadratic formula) from the online notes on the course
 website.
 
-Part d. - Li Wan
+Part d. - Li Wan & Sang-Ah Han
 Phong shading code is in light_source.cpp. We used the lecture slides' guide to
 find the values for diffuse, specular and ambient colours, and added them all
 together to produce Phong shading.
@@ -81,11 +81,7 @@ the damp factor.
 - Renders: glossy_reflect{1,2,3}.bmp -- using 4 rays
 
 Texture mapping - Li Wan
+- Not implemented
 
 Environment mapping - Li Wan
-
-Non-trivial objects - Sang-Ah Han & Li Wan
-We drew a cylinder in our ray-tracing program. The most amount of code for this
-cylinder is in scene_object.cpp's UnitCylinder::intersect. Sang-Ah wrote the
-code to check for intersection around the quadric area of the cylinder. Li wrote
-the code to check for intersection at the caps of the cylinder.
+- Not implemented
