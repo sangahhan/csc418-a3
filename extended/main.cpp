@@ -15,6 +15,7 @@ bool GLOSSY_REFLECT = false;
 bool REFLECT = false;
 bool SHADOW = false;
 bool SOFT_SHADOW = false;
+
 int main(int argc, char* argv[])
 {
 	// Build your scene and setup your camera here, by calling
@@ -26,32 +27,60 @@ int main(int argc, char* argv[])
 	int width = 320;
 	int height = 240;
 
-	if (argc == 3) {
-		width = atoi(argv[1]);
-		height = atoi(argv[2]);
-	}
 
-	if (argc == 2) {
+	const char* view1_file = NULL;
+	const char* view2_file = NULL;
+	const char* view3_file = NULL;
+
+	const char* syntax = "Syntax: ./raytracer antialias|glossyreflect|reflect|softshadow|shadow|all [width height]";
+
+	if (argc == 2 || argc == 4) {
 		char* feature = argv[1];
 		if (strcmp("antialias", feature) == 0){
 			ANTIALIAS = true;
+			view1_file = "render_antialias1.bmp";
+			view2_file = "render_antialias2.bmp";
+			view3_file = "render_antialias3.bmp";
 		} else if (strcmp("glossyreflect", feature) == 0) {
 			GLOSSY_REFLECT = true;
+			view1_file = "render_glossyreflect1.bmp";
+			view2_file = "render_glossyreflect2.bmp";
+			view3_file = "render_glossyreflect3.bmp";
 		} else if (strcmp("reflect", feature) == 0) {
 			REFLECT = true;
+			view1_file = "render_reflect1.bmp";
+			view2_file = "render_reflect2.bmp";
+			view3_file = "render_reflect3.bmp";
 		} else if (strcmp("softshadow", feature) == 0) {
 			SOFT_SHADOW = true;
+			view1_file = "render_softshadow1.bmp";
+			view2_file = "render_softshadow2.bmp";
+			view3_file = "render_softshadow3.bmp";
 		} else if (strcmp("shadow", feature) == 0) {
 			SHADOW = true;
+			view1_file = "render_shadow1.bmp";
+			view2_file = "render_shadow2.bmp";
+			view3_file = "render_shadow3.bmp";
 		} else if (strcmp("all", feature) == 0) {
 			ANTIALIAS = true;
 			GLOSSY_REFLECT = true;
 			REFLECT = false;
 			SOFT_SHADOW = true;
 			SHADOW = false;
+			view1_file = "render_all1.bmp";
+			view2_file = "render_all2.bmp";
+			view3_file = "render_all3.bmp";
 		} else {
-			std::cout << "Invalid argument." << std::endl;
+			std::cout << syntax << std::endl;
+			exit(1);
 		}
+		if (argc == 4) {
+			width = atoi(argv[2]);
+			height = atoi(argv[3]);
+		}
+	} else if (argc == 1) {
+		std::cout << syntax << std::endl;
+		exit(1);
 	}
 
 
@@ -92,18 +121,16 @@ int main(int argc, char* argv[])
 	// Render the scene, feel free to make the image smaller for
 	// testing purposes.
 	Vector3D view(0.75,-1, -6.);
-	raytracer.render(width, height, eye, view, up, fov, "view1.bmp");
+	raytracer.render(width, height, eye, view, up, fov, view1_file);
 
 	// Render it from a different point of view.
 	Point3D eye2(6., 1., -1.);
 	Vector3D view2(-4., -2., -6.);
-	raytracer.render(width, height, eye2, view2, up, fov, "view2.bmp");
+	raytracer.render(width, height, eye2, view2, up, fov, view2_file);
 
-	double factor3[3] = { 2.5, 2.5, 2.5 };
-
-	Point3D eye3(1., 2., -1);
-	Vector3D view3(-1., 0., -4.);
-	raytracer.render(width, height, eye3, view3, -1 * up, fov, "view3.bmp");
+	Point3D eye3(2., 2, -1);
+	Vector3D view3(-1., -2.5, -6.);
+	raytracer.render(width, height, eye3, view3, -1 * up, fov, view3_file);
 
 	return 0;
 }

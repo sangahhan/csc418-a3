@@ -383,13 +383,9 @@ Colour Raytracer::shadeRay( Ray3D& ray ) {
 	return col;
 }
 
-Colour Raytracer::render_helper (Matrix4x4 viewToWorld, int width, int height, double factor, int i, int j){
+Colour Raytracer::render_helper (Matrix4x4 viewToWorld, Point3D imagePlane){
 	// Sets up ray origin and direction in view space, image plane is at z = -1.
 	Point3D origin(0., 0., 0.);
-	Point3D imagePlane;
-	imagePlane[0] = (-double(width)/2 + 0.5 + i)/factor;
-	imagePlane[1] = (-double(height)/2 + 0.5 + j)/factor;
-	imagePlane[2] = -1;
 
 	// TODO: Convert ray to world space and call
 	// shadeRay(ray) to generate pixel colour.
@@ -430,10 +426,15 @@ void Raytracer::render( int width, int height, Point3D eye, Vector3D view,
 			for p = 0 to n − 1 do for q = 0 to n − 1 do
 			c = c + ray-color(i + (p + 0.5)/n, j + (q + 0.5)/n) cij = c/n2
 			*/
+			Point3D imagePlane;
 			if (ANTIALIAS){
+
 				for(float p = i; p < i + 1.0f; p += 0.5f){
 					for(float q = j; q < j + 1.0f; q += 0.5f){
-						Colour col = render_helper(viewToWorld, width, height, factor, p, q);
+						imagePlane[0] = (-double(width)/2 + 0.5 + q)/factor;
+						imagePlane[1] = (-double(height)/2 + 0.5 + p)/factor;
+						imagePlane[2] = -1;
+						Colour col = render_helper(viewToWorld, imagePlane);
 						// reduce contribution of rays to 1/4
 						_rbuffer[i*width+j] += int(col[0]*255*0.25);
 						_gbuffer[i*width+j] += int(col[1]*255*0.25);
@@ -441,7 +442,10 @@ void Raytracer::render( int width, int height, Point3D eye, Vector3D view,
 					}
 				}
 			} else {
-				Colour col = render_helper(viewToWorld, width, height, factor, i, j);
+				imagePlane[0] = (-double(width)/2 + 0.5 + j)/factor;
+				imagePlane[1] = (-double(height)/2 + 0.5 + i)/factor;
+				imagePlane[2] = -1;
+				Colour col = render_helper(viewToWorld, imagePlane);
 				_rbuffer[i*width+j] = int(col[0]*255);
 				_gbuffer[i*width+j] = int(col[1]*255);
 				_bbuffer[i*width+j] = int(col[2]*255);

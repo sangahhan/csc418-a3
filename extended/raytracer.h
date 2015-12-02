@@ -76,7 +76,7 @@ public:
 	void render( int width, int height, Point3D eye, Vector3D view,
 			Vector3D up, double fov, std::string fileName );
 
-  Colour render_helper(Matrix4x4 viewToWorld, int width, int height, double factor, int i, int j);
+  Colour render_helper(Matrix4x4 viewToWorld, Point3D imagePlane);
 
 	// Add an object into the scene, with material mat.  The function
 	// returns a handle to the object node you just added, use the
