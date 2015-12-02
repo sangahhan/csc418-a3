@@ -229,15 +229,12 @@ void Raytracer::computeShading( Ray3D& ray ) {
 		if (SHADOW) {
 			Ray3D newRay;
 			newRay.dir = curLight->light->get_position() - ray.intersection.point;
-			double t = newRay.dir.length();
 			newRay.dir.normalize();
 			newRay.origin = ray.intersection.point + 0.01 * newRay.dir;
-
-			traverseScene(_root, newRay);
-
 			curLight->light->shade(ray);
-			if (!newRay.intersection.none && t >= newRay.intersection.t_value){
-				ray.col = 0.5 * ray.col; // if in shadow, darken
+			traverseScene(_root, newRay);
+			if (!newRay.intersection.none && ray.intersection.mat != newRay.intersection.mat){
+				ray.col =  0.5 * ray.col;
 			}
 		} else if (SOFT_SHADOW) {
 			// TODO: SOFT SHADOW
@@ -257,11 +254,13 @@ void Raytracer::computeShading( Ray3D& ray ) {
 				// avoid intersection with some object
 				newRay.origin = ray.intersection.point + 0.01 * newRay.dir;
 
-				traverseScene(_root, newRay);
 				curLight->light->shade(ray);
+				traverseScene(_root, newRay);
+
 				// if sample shadow rays intersect, shade the original ray
-				if (!newRay.intersection.none) {
+				if (!newRay.intersection.none  && ray.intersection.mat != newRay.intersection.mat) {
 					ray.col =  0.5 * ray.col;
+
 				}
 			}
 		}  else {
@@ -269,7 +268,6 @@ void Raytracer::computeShading( Ray3D& ray ) {
 		}
 		ray.col.clamp();
 		curLight = curLight->next;
-
 	}
 }
 
