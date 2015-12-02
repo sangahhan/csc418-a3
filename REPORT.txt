@@ -1,0 +1,109 @@
+
+Sang-Ah Han 998867418
+Li Wan 998801088
+
+Basic Ray-Tracer
+
+Part a. - Sang-Ah Han
+Ray casting code is in raytracer.cpp. We take the image plane and convert it to
+world space = i. Then we take the ray's direction that convert it to world space
+= d. The resulting ray begins at i and goes n direction d.
+
+Part b. - Sang-Ah Han
+Intersection for ray-square code is in scene_object.cpp. We convert the ray's
+origin and direction to object space. We assume that it's a unit square (width
+1, centered at origin). If we find that its t-value tells us there is an
+intersection that is in front of the ray, we set it that point to be the ray's
+intersection. We used the pseudo-code from tutorial to write our code.
+
+Part c. - Sang-Ah Han
+Intersection for ray-sphere code is in scene_object.cpp. We convert the ray's
+origin and direction to object space. We assume that it's a unit sphere (radius
+1, centered at origin). We use the quadratic formula to find the sphere's
+t-values. If we find that its t-value tells us there is an intersection that is
+in front of the ray, we set it that point to be the ray's intersection. We found
+the a, b, c values (quadratic formula) from the online notes on the course
+website.
+
+Part d. - Li Wan & Sang-Ah Han
+Phong shading code is in light_source.cpp. We used the lecture slides' guide to
+find the values for diffuse, specular and ambient colours, and added them all
+together to produce Phong shading.
+
+--
+
+Advanced Ray Tracer -- found in /extended folder.
+The renders for the advanced ray tracer use a more enlarged plane than the
+basic version. The renders for each individual feature listed can be found in
+the same folder, with prefix 'render_'. The renders for the final ray tracer are
+render_all{1,2,3}.bmp, and can be obtained by running ./raytracer all
+
+
+Specular reflections - Sang-Ah Han
+Reflection code is in raytracer.cpp, in the shadeRay function. We used notes from
+tutorial and from the textbook to construct a "reflection ray". If there was an
+intersection with the "reflection ray", then we added shadeRay(REFLECTION RAY)
+* DAMP FACTOR to the intersection's colour, where DAMP FACTOR is a factor based
+on the distance of the intersection.
+- Run: ./raytracer reflect
+- Look for "TODO: REFLECTION"
+- Renders: render_reflect{1,2,3}.bmp
+
+Shadows - Sang-Ah Han
+Similarly to the specular reflections, we used tutorial notes and textbook notes
+to construct a "shadow ray". If there was an intersection with the "reflection
+ray", then we added 0.5 * the intersection's colour to the intersection's colour
+(to make it darker). This is done in raytracer.cpp's Raytracer::computeShading.
+- Run: ./raytracer shadow
+- Look for "TODO: SHADOWS"
+- Renders: render_shadow{1,2,3}.bmp
+
+Anti-aliasing - Sang-Ah Han
+Code for anti-aliasing is found in raytracer.cpp's Raytracer::render. We used
+notes from http://www.ics.uci.edu/~gopi/CS211B/RayTracing%20tutorial.pdf to
+change the ray construction loop, so that the resulting colour is an average of
+4 samples. Looking at the renders, we can see that the lines around the sphere are
+much smoother than in the renders for the Shadows feature.
+- Run: ./raytracer antialias
+- Look for "TODO: ANTIALIAS"
+- Renders: render_antialias{1,2,3}.bmp
+
+Soft shadows - Sang-Ah Han
+We replace the shadow code with soft shadow code in raytracer.cpp's function
+Raytracer::computeShading. Instead of looking for one ray, we cast multiple rays
+that are at a "jittered" position (a random position near the original ray's
+position).  If these rays intersect, then we also half the original ray.
+- Run: ./raytracer softshadow
+- Look for "TODO: SOFT SHADOW"
+- Renders: render_softshadow{1,2,3}.bmp -- using 30 rays
+
+Glossy reflection - Sang-Ah Han
+We replace the reflection code with soft shadow code in raytracer.cpp's function
+Raytracer::shadeRay. Instead of looking for one ray, we cast multiple rays
+that are at a "jittered" position (a random position near the original ray's
+position).  If these rays intersect, then we also multiply the original ray by
+the damp factor.
+- Run: ./raytracer glossyreflect
+- Look for "TODO: GLOSSY REFLECT"
+- Renders: render_glossyreflect{1,2,3}.bmp -- using 4 rays
+
+Cylinder - Sang-Ah Han
+We added code to detect intersections with cylinders in scene_object.cpp. We used
+formulas from the online notes:
+http://www.dgp.toronto.edu/~karan/courses/418/Notes/BasicRayTracing.pdf
+as well as some formulas from these slides:
+http://www.irisa.fr/prive/kadi/Master_Recherche/cours_CTR/RayTracing.pdf
+to find intersections around the cylinder wall. Then we checked for intersections
+at the cylinder caps. The method for checking for cap intersection was derived from:
+https://www.cl.cam.ac.uk/teaching/1999/AGraphHCI/SMAG/node2.html
+The cylinder is drawn with the same material as the sphere.
+- Run: ./raytracer cylinder
+- Look for "TODO: CYLINDER"
+- Renders: render_cylinder{1,2,3}.bmp
+
+
+Texture mapping - Li Wan
+- Not implemented
+
+Environment mapping - Li Wan
+- Not implemented
