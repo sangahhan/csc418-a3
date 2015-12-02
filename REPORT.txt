@@ -98,4 +98,10 @@ as the sphere.
 
 
 Texture mapping - Li Wan
-- Not implemented
+We use a global buffer for R, G, and B values for the image. The image's RGB
+values are loaded into the proper buffer. Then we find the x,y pixel for each
+point on the object we map to (the sphere) and set the colour of the ray that
+intersects the object to be equal to the colour on the image.
+- Run: ./raytracer texture
+- Look for "TODO: texture"
+- Renders: render_texture{1,2,3}.bmp

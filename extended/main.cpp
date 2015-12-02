@@ -16,6 +16,7 @@ bool REFLECT = false;
 bool SHADOW = false;
 bool SOFT_SHADOW = false;
 bool CYLINDER = false;
+bool TEXTURE = false;
 
 int main(int argc, char* argv[])
 {
@@ -34,7 +35,7 @@ int main(int argc, char* argv[])
 	const char* view3_file = NULL;
 
 	// please excuse the extra long line
-	const char* syntax = "Syntax: ./raytracer <feature> [width height]\nOptions for <feature> argument:\n- antialias -> show sphere with antialiasing\n- glossyreflect -> show sphere with glossy reflection\n- reflect --> show sphere with hard reflection\n- softshadow --> show sphere with soft shadow\n- shadow --> show sphere with hard shadow\n- cylinder --> show cylinder & sphere\n- all --> show sphere with soft shadow, hard shadow, antialiasing";
+	const char* syntax = "Syntax: ./raytracer <feature> [width height]\nOptions for <feature> argument:\n- antialias -> show sphere with antialiasing\n- glossyreflect -> show sphere with glossy reflection\n- reflect --> show sphere with hard reflection\n- softshadow --> show sphere with soft shadow\n- shadow --> show sphere with hard shadow\n- cylinder --> show cylinder & sphere\n- texture --> show sphere with texture on sphere\n- all --> show sphere with soft shadow, hard shadow, antialiasing";
 
 	if (argc == 2 || argc == 4) {
 		char* feature = argv[1];
@@ -68,6 +69,11 @@ int main(int argc, char* argv[])
 			view1_file = "render_cylinder1.bmp";
 			view2_file = "render_cylinder2.bmp";
 			view3_file = "render_cylinder3.bmp";
+		} else if (strcmp("texture", feature) == 0) {
+			TEXTURE = true;
+			view1_file = "render_texture1.bmp";
+			view2_file = "render_texture2.bmp";
+			view3_file = "render_texture3.bmp";
 		} else if (strcmp("all", feature) == 0) {
 			ANTIALIAS = true;
 			GLOSSY_REFLECT = false;
@@ -75,6 +81,7 @@ int main(int argc, char* argv[])
 			SOFT_SHADOW = true;
 			SHADOW = false;
 			CYLINDER = false;
+			TEXTURE = false;
 			view1_file = "render_all1.bmp";
 			view2_file = "render_all2.bmp";
 			view3_file = "render_all3.bmp";

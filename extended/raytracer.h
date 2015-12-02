@@ -22,6 +22,7 @@ extern bool REFLECT;
 extern bool SHADOW;
 extern bool SOFT_SHADOW;
 extern bool CYLINDER;
+extern bool TEXTURE;
 
 // Linked list containing light sources in the scene.
 struct LightListNode {
