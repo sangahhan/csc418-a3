@@ -193,8 +193,8 @@ bool UnitCylinder::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 
 	// determine normal vector based on where intersects
 	// z=-1 for bottom cap, z=1 for top cap
-	Vector3D normal = Vector3D(0., 0., 1.);
-	if(cap_intersect[2] < 0.5) normal[2] = -1;
+	Vector3D norm = Vector3D(0., 0., 1.);
+	if(cap_intersect[2] < 0.5) norm[2] = -1;
 
 	//  x^2 + y^2 < 1
 	float x2y2 = cap_intersect[0] * cap_intersect[0] + cap_intersect[1] * cap_intersect[1];;
