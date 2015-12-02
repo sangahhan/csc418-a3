@@ -93,7 +93,8 @@ int main(int argc, char* argv[])
 
 	// Camera parameters.
 	Point3D eye(0., 0., 1.);
-	//Vector3D view(0., 0., -1.);
+	Vector3D view(0., 0., -1.);
+	//Vector3D view(0., 0., -0.8);
 	Vector3D up(0., 1., 0.);
 	Vector3D side(0., 0., 1.);
 
@@ -121,6 +122,7 @@ int main(int argc, char* argv[])
 	// Apply some transformations to the unit square.
 	double factor1[3] = { 1.0, 2.0, 1.0 };
 	double factor2[3] = { 14., 14., 14. };
+
 	//raytracer.translate(sphere, Vector3D(0., 0., 0.));
 	//raytracer.rotate(sphere, 'x', -45);
 	//raytracer.rotate(sphere, 'z', 45);
@@ -145,9 +147,10 @@ int main(int argc, char* argv[])
 	raytracer.rotate(plane, 'z', 45);
 	raytracer.scale(plane, Point3D(0., 0., 0.), factor2);
 
+
 	// Render the scene, feel free to make the image smaller for
 	// testing purposes.
-	Vector3D view(0.75, -1, -6.);
+	//Vector3D view(0.75, -1, -6.);
 	raytracer.render(width, height, eye, view, up, fov, view1_file);
 
 	// Render it from a different point of view.

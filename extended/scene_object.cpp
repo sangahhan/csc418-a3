@@ -116,100 +116,95 @@ bool UnitSphere::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 
 bool UnitCylinder::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 		const Matrix4x4& modelToWorld ) {
+
 	// TODO: CYLINDER
 
+
 	Ray3D newRay;
+	newRay.origin = worldToModel*ray.origin;
+    newRay.dir = worldToModel*ray.dir;
 
-	newRay.origin = worldToModel * ray.origin;
-	newRay.dir = worldToModel * ray.dir;
-
-	Point3D centre(0.,0.,0.);
-	Vector3D distance = newRay.origin - centre;
-
-	// r = 1
-	float a = newRay.dir[0] * newRay.dir[0] + newRay.dir[1] * newRay.dir[1];
-	float b = distance[0] * newRay.dir[0] + distance[1] * newRay.dir[1];
-	float c = distance[0] * distance[0] + distance[1] * distance[1] - 1;
-	float d = b * b - a * c;
+	Point3D centre(0.0f,0.0f,0.0f);
 
 
-  /*Find intersection with ”quadratic wall,” ignoring constraints on z,
-	   e.g. using x^2 + y^2 − (1/4) (1 − z^2) = 0.
-	   Then test the z component of p ̄(λ∗) against the constraint on z,
-	   e.g. z ≤ 1 or z < 1.*/
-	float t;
-	float lambda0;
-	float lambda1;
+	// Quadratic formula
 
-	// negative discriminant --> ray doesn't intersect
-	if (d <= 0 || a == 0) return false;
- 	else {
-		lambda0 = (-b + sqrt(d))/ a;
-	  lambda1 = (-b - sqrt(d))/ a;
-		t = fmin(lambda0, lambda1);
-	}
+	double lambda1;
+	double lambda2;
+	double lambda3;
+	double lambda4;
 
-	if (ray.intersection.none || ray.intersection.t_value > t) {
-		Point3D point = newRay.origin + t * newRay.dir;
-		if ( (point[2] > -1) && (point[2] < 1)){
-			Vector3D newNormal = Vector3D(point[0], point[1], 0);
-			newNormal.normalize();
+	Point3D itsPoint;
+	Vector3D nor1;
+	Vector3D nor2;
 
-			//update the ray
-			ray.intersection.none = false;
-			ray.intersection.t_value = t;
-			ray.intersection.point = modelToWorld * point;
-			ray.intersection.normal = transNorm(worldToModel, newNormal);
-			return true;
-		}
+	double a = pow(newRay.dir[0],2) + pow(newRay.dir[1],2);
+	double b = newRay.origin[0]*newRay.dir[0] + newRay.origin[1] * newRay.dir[1];
+	double c = pow(newRay.origin[0],2) + pow(newRay.origin[1],2) - 1;
+
+
+
+	double d = b*b - a*c;
+    if (d<0) return false;
+    lambda1 = -b/a + sqrt(d) / a;
+	lambda2 = -b/a - sqrt(d) / a;
+	if (lambda1 < 0 && lambda2 < 0) return false;
+	else if (lambda1 > 0 && lambda2 < 0){
+		lambda2 = lambda1;
+	}else{
+		lambda4 = lambda2;
 	}
 
 
-	/*Intersect the ray with the planes containing the base or cap (e.g. z = 1
-		for the cylinder). Then test the x and y components of p ̄(λ∗) to see if they
-		satisfy interior constraints (e.g. for the cylinder).
+	lambda1 = -(0.5+newRay.origin[2])/newRay.dir[2];
+	lambda2 = (0.5-newRay.origin[2])/newRay.dir[2];
+	if (lambda1 < lambda2){
+		Point3D temp(0,0,-1);
+		lambda3 = lambda1;
+		nor1 = temp - centre;
+		nor1.normalize();
+	}
+	else{
+		Point3D temp(0,0,1);
+		lambda3 = lambda2;
+		nor1 = temp - centre;
+		nor1.normalize();
+	}
 
-		If there are multiple intersections, then take the intersection with the
-		smallest positive λ (i.e., closest to the start of the ray).*/
+	if (pow(lambda3,2) < 1/1000) return false;
 
-	// t1, t2, t3, t4 refers to http://www.irisa.fr/prive/kadi/Master_Recherche/cours_CTR/RayTracing.pdf
+	itsPoint = newRay.origin + lambda3 * newRay.dir;
 
-	lambda0 = (1 - distance[2]) / newRay.dir[2]; // t1
-	lambda1 = -distance[2] / newRay.dir[2]; // t2
-
-	// https://www.cl.cam.ac.uk/teaching/1999/AGraphHCI/SMAG/node2.html
-	// z = 0
-	bool outside = (lambda0 > 0) && (lambda1 > 0); // ray is outside caps
-	bool inside = ((lambda0 > 0) && (lambda1 < 0)) || ((lambda0 < 0) && (lambda1 > 0)); // ray is inside caps
-
-	if (outside) t = fmin(lambda0, lambda1); // pick smaller lambda --> t3
-	else t = fmax(lambda0, lambda1); // pick larger lambsa --> t4
-
-	// doesn't intersect a cap
-	if (!(ray.intersection.none || ray.intersection.t_value > t)) return false;
-
-	// find intersection with ray and cyl
-	Point3D cap_intersect = newRay.origin + t * newRay.dir;
-
-	// determine normal vector based on where intersects
-	// z=-1 for bottom cap, z=1 for top cap
-	Vector3D norm = Vector3D(0., 0., 1.);
-	if(cap_intersect[2] < 0.5) norm[2] = -1;
-
-	//  x^2 + y^2 < 1
-	float x2y2 = cap_intersect[0] * cap_intersect[0] + cap_intersect[1] * cap_intersect[1];;
-
-	if(x2y2 < 1){
-		Vector3D newNormal = transNorm(worldToModel, normal);
-		newNormal.normalize();
+	if (pow(itsPoint[0],2) + pow(itsPoint[1],2) <=  1){
+		if (!ray.intersection.none > ray.intersection.t_value) return false;
+		ray.intersection.t_value = lambda3;
+		ray.intersection.point = itsPoint;
+		ray.intersection.normal = nor1;
 		ray.intersection.none = false;
-		ray.intersection.t_value = t;
-		ray.intersection.point = modelToWorld * cap_intersect;
-		ray.intersection.normal = newNormal;
 		return true;
 	}
 
-	// after all that checking, nothing's been returned --> no hit
-	return false;
 
+	if (pow(lambda4 ,2) < 1/1000) return false;
+	itsPoint = newRay.origin + lambda4 * newRay.dir;
+
+	nor2[0] = itsPoint[0];
+	nor2[1] = itsPoint[1];
+	nor2[2] = 0;
+	nor2.normalize();
+
+
+  if (itsPoint[2] < 0.5 && itsPoint[2] > -0.5)
+	{
+		if (!ray.intersection.none > ray.intersection.t_value)
+			return false;
+
+		ray.intersection.point = modelToWorld * itsPoint;
+		Point3D tmp1(itsPoint[0],itsPoint[1],0);
+		ray.intersection.t_value = lambda4;
+		ray.intersection.normal = modelToWorld * (tmp1 - centre);
+		ray.intersection.none = false;
+		return true;
+	}
+	return false;
 }
