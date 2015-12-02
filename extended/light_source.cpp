@@ -71,14 +71,14 @@ void PointLight::shade( Ray3D& ray ) {
       mag = (mag * M_PI);
       double tanV = tan(mag); 
 
-      double color = 30; 
+      double color = 0; 
       if (tanV >= 0) color = 1; 
       ray.col[0] = (color);
       mag = itsPoint[1];
       mag = (mag * M_PI);
       tanV = tan(mag); 
 
-       color = 10; 
+       color = 0; 
       if (tanV >= 0) color = 1;
       ray.col[1] = (color);
       mag = itsPoint[2];
@@ -86,7 +86,7 @@ void PointLight::shade( Ray3D& ray ) {
 
        tanV = tan(mag); 
 
-       color = 20; 
+       color = 0; 
       if (tanV >= 0) color = 1; 
       ray.col[2] = (color);
     }

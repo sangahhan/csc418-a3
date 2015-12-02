@@ -108,18 +108,13 @@ int main(int argc, char* argv[])
     if (MAPPING){
     int numbytesTextureMap = width * height * sizeof(unsigned char);
 	rbuffer = new unsigned char[numbytesTextureMap];
+	std::fill_n(rbuffer, numbytesTextureMap,0);
 	gbuffer = new unsigned char[numbytesTextureMap];
+	std::fill_n(gbuffer, numbytesTextureMap,0);
 	bbuffer = new unsigned char[numbytesTextureMap];
-	//inital buffer value
-	for (int i = 0; i < height; i++) 
-	{
-		for (int j = 0; j < width; j++) 
-		{
-			rbuffer[i*width+j] = 0;
-			gbuffer[i*width+j] = 0;
-			bbuffer[i*width+j] = 0;
-		}
-	}
+	std::fill_n(bbuffer, numbytesTextureMap,0);
+	
+
 	int temp1 = width;
 	int temp2 = height; 
 	long unsigned int* widthTextureMap = new long unsigned int(width);
@@ -160,11 +155,11 @@ int main(int argc, char* argv[])
 	
     Material::Ptr gold = std::make_shared<Material>( Colour(0.3, 0.3, 0.3), Colour(0.75164, 0.60648, 0.22648),
 			Colour(0.628281, 0.555802, 0.366065),
-			51.2, 1, 0.1, 1);
+			51.2, 1, 0.1, 0);
     
     Material::Ptr jade = std::make_shared<Material>( Colour(0, 0, 0), Colour(0.54, 0.89, 0.63),
 			Colour(0.316228, 0.316228, 0.316228),
-			12.8, 0, 1, 2);
+			12.8, 0, 1, 1);
     
     
 
@@ -188,7 +183,7 @@ int main(int argc, char* argv[])
 	double factor2[3] = { 14., 14., 14. };
 	double factor3[3] = { 1.5, 1.5, 2 };
 	
-	raytracer.translate(sphere, Vector3D(0., 0., -6.));
+	//raytracer.translate(sphere, Vector3D(0., 0., -6.));
 	
 	 //raytracer.rotate(sphere, 'x', -45);
 	 //raytracer.rotate(sphere, 'z', 45);
@@ -202,8 +197,8 @@ int main(int argc, char* argv[])
 	 
 
 
-	//raytracer.translate(cylinder, Vector3D(0, 0, -6));
-	//raytracer.scale(cylinder, Point3D(0, 0, 0), factor3);
+	raytracer.translate(cylinder, Vector3D(0, 0, -6));
+	raytracer.scale(cylinder, Point3D(0, 0, 0), factor3);
 	
 	// Render the scene, feel free to make the image smaller for
 	// testing purposes.
