@@ -87,23 +87,15 @@ the damp factor.
 - Look for "TODO: GLOSSY REFLECT"
 - Renders: render_glossyreflect{1,2,3}.bmp -- using 4 rays
 
-Cylinder - Sang-Ah Han
-We added code to detect intersections with cylinders in scene_object.cpp. We used
-formulas from the online notes:
-http://www.dgp.toronto.edu/~karan/courses/418/Notes/BasicRayTracing.pdf
-as well as some formulas from these slides:
-http://www.irisa.fr/prive/kadi/Master_Recherche/cours_CTR/RayTracing.pdf
-to find intersections around the cylinder wall. Then we checked for intersections
-at the cylinder caps. The method for checking for cap intersection was derived from:
-https://www.cl.cam.ac.uk/teaching/1999/AGraphHCI/SMAG/node2.html
-The cylinder is drawn with the same material as the sphere.
+Cylinder - Li Wan
+We added code to detect intersections with cylinders in scene_object.cpp.
+We first find intersections around the cylinder wall. Then we checked for
+intersections at the cylinder caps. The cylinder is drawn with the same material
+as the sphere.
 - Run: ./raytracer cylinder
 - Look for "TODO: CYLINDER"
 - Renders: render_cylinder{1,2,3}.bmp
 
 
 Texture mapping - Li Wan
-- Not implemented
-
-Environment mapping - Li Wan
 - Not implemented

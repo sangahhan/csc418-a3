@@ -291,6 +291,14 @@ void Raytracer::flushPixelBuffer( std::string file_name ) {
 }
 
 Colour Raytracer::shadeRay( Ray3D& ray ) {
+	int n = 0;
+	if (REFLECT) n = 1;
+	if (GLOSSY_REFLECT) n = 4;
+	return shadeRay(ray, n);
+}
+
+
+Colour Raytracer::shadeRay( Ray3D& ray, int n ) {
 	Colour col(0.0, 0.0, 0.0);
 	traverseScene(_root, ray);
 
@@ -314,7 +322,7 @@ Colour Raytracer::shadeRay( Ray3D& ray ) {
 			new colour = colour + shadeRay(newray) * damp factor
 			where the damp factor is based on distance
 			only bounce if the matieral is reflective and don't bounce infinitely*/
-			if (REFLECT) {
+			if (REFLECT && n != -1) {
 				// set up reflection ray
 				Point3D ray_intersect = ray.intersection.point;
 				Vector3D ray_dir = ray.dir;
@@ -328,7 +336,7 @@ Colour Raytracer::shadeRay( Ray3D& ray ) {
 				newRay.dir = reflection_dir;
 
 				// calculate shade of reflected ray
-				shadeRay(newRay);
+				shadeRay(newRay, n-1);
 
 				if (newRay.intersection.t_value > 0.0) {
 					// the damp factor is based on distance
@@ -339,9 +347,8 @@ Colour Raytracer::shadeRay( Ray3D& ray ) {
 					if (dampFactor > 1) dampFactor = 1;
 					col = col + dampFactor * newRay.col;
 				}
-			} else if (GLOSSY_REFLECT){
+			} else if (GLOSSY_REFLECT && n != -1){
 				//TODO: GLOSSY REFLECT
-				int n = 4;
 				int rays = 0;
 
 				// set up reflection ray
@@ -363,7 +370,7 @@ Colour Raytracer::shadeRay( Ray3D& ray ) {
 					Point3D ray_intersect = ray.intersection.point + jitter1 * axis1 + jitter2 * axis2;
 					newRay.origin = ray_intersect;
 
-					shadeRay(newRay);
+					shadeRay(newRay, n-1 );
 					if (newRay.intersection.t_value > 0.0) {
 				    // the damp factor is based on distance
 						float dampFactor = fabs(1 /newRay.intersection.t_value); // is this the right way to get damp factor?
@@ -382,6 +389,7 @@ Colour Raytracer::shadeRay( Ray3D& ray ) {
 	}
 	return col;
 }
+
 
 Colour Raytracer::render_helper (Matrix4x4 viewToWorld, Point3D imagePlane){
 	// Sets up ray origin and direction in view space, image plane is at z = -1.

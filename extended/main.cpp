@@ -69,7 +69,7 @@ int main(int argc, char* argv[])
 			view3_file = "render_cylinder3.bmp";
 		} else if (strcmp("all", feature) == 0) {
 			ANTIALIAS = true;
-			GLOSSY_REFLECT = true;
+			GLOSSY_REFLECT = false;
 			REFLECT = false;
 			SOFT_SHADOW = true;
 			SHADOW = false;
@@ -93,7 +93,7 @@ int main(int argc, char* argv[])
 
 	// Camera parameters.
 	Point3D eye(0., 0., 1.);
-	Vector3D view(0., 0., -1.);
+	//Vector3D view(0., 0., -1.);
 	//Vector3D view(0., 0., -0.8);
 	Vector3D up(0., 1., 0.);
 	Vector3D side(0., 0., 1.);
@@ -119,49 +119,40 @@ int main(int argc, char* argv[])
 		//SceneDagNode::Ptr plane2 = raytracer.addObject( std::make_shared<UnitSquare>(), jade );
     SceneDagNode::Ptr plane = raytracer.addObject( std::make_shared<UnitSquare>(), jade );
 
-	// Apply some transformations to the unit square.
-	double factor1[3] = { 1.0, 2.0, 1.0 };
-	double factor2[3] = { 14., 14., 14. };
-
-	//raytracer.translate(sphere, Vector3D(0., 0., 0.));
-	//raytracer.rotate(sphere, 'x', -45);
-	//raytracer.rotate(sphere, 'z', 45);
-	//raytracer.scale(sphere, Point3D(0., 0., 0.), factor1);
-
 	if (CYLINDER){
-		double factor3[3] = { 0.5,0.5,0.5 };
+		double factor3[3] = { 0.3,0.3,0.3 };
 		raytracer.scale(cylinder, Point3D(0., 0., 0.), factor3);
-		raytracer.translate(cylinder, Vector3D(2., 0., -5.));
-		raytracer.rotate(cylinder, 'x', -30);
+		raytracer.translate(cylinder, Vector3D(1., 0., -5.));
+		//raytracer.rotate(cylinder, 'x', -30);
 
 	}
-	//raytracer.rotate(cylinder, 'z', 90);
-
 	// Apply some transformations to the unit square.
-	raytracer.translate(sphere, Vector3D(0., 0., -5.));
-	//raytracer.rotate(sphere, 'x', -45);
-	//raytracer.rotate(sphere, 'z', 45);
-	//raytracer.scale(sphere, Point3D(0., 0., 0.), factor1);
+ 	double factor1[3] = { 1.0, 2.0, 1.0 };
+ 	double factor2[3] = { 14., 14., 14. };
+ 	raytracer.translate(sphere, Vector3D(0., 0., -5.));
+ 	// raytracer.rotate(sphere, 'x', -45);
+ 	// raytracer.rotate(sphere, 'z', 45);
+ 	// raytracer.scale(sphere, Point3D(0., 0., 0.), factor1);
 
-	raytracer.translate(plane, Vector3D(0., 0., -7.));
-	raytracer.rotate(plane, 'z', 45);
-	raytracer.scale(plane, Point3D(0., 0., 0.), factor2);
+ 	raytracer.translate(plane, Vector3D(0., 0., -7.));
+ 	raytracer.rotate(plane, 'z', 45);
+ 	raytracer.scale(plane, Point3D(0., 0., 0.), factor2);
 
+ 	// Render the scene, feel free to make the image smaller for
+ 	// testing purposes.
+ 	Vector3D view(0.75,-1, -6.);
+ 	raytracer.render(width, height, eye, view, up, fov, view1_file);
 
-	// Render the scene, feel free to make the image smaller for
-	// testing purposes.
-	//Vector3D view(0.75, -1, -6.);
-	raytracer.render(width, height, eye, view, up, fov, view1_file);
+ 	// Render it from a different point of view.
+ 	Point3D eye2(6., 1., -1.);
+ 	Vector3D view2(-4., -2., -6.);
+ 	raytracer.render(width, height, eye2, view2, up, fov, view2_file);
 
-	// Render it from a different point of view.
-	Point3D eye2(6., 1., -1.);
-	Vector3D view2(-6., -3., -6.);
-	raytracer.render(width, height, eye2, view2, up, fov, view2_file);
+ 	double factor3[3] = { 2.5, 2.5, 2.5 };
 
-	Point3D eye3(2., 2, -1);
-	Vector3D view3(-1., -2.5, -6.);
-	raytracer.render(width, height, eye3, view3, -1 * up, fov, view3_file);
+ 	Point3D eye3(1., 2., -1);
+ 	Vector3D view3(-1., 0., -4.);
+ 	raytracer.render(width, height, eye3, view3, -1 * up, fov, view3_file);
 
-
-	return 0;
+ 	return 0;
 }

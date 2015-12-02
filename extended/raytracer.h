@@ -120,6 +120,9 @@ private:
 	// this function recursively for reflection and refraction.
 	Colour shadeRay( Ray3D& ray );
 
+  Colour shadeRay( Ray3D& ray, int n );
+
+
 	// Constructs a view to world transformation matrix based on the
 	// camera parameters.
 	Matrix4x4 initInvViewMatrix( Point3D eye, Vector3D view, Vector3D up );
