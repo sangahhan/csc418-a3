@@ -33,7 +33,8 @@ int main(int argc, char* argv[])
 	const char* view2_file = NULL;
 	const char* view3_file = NULL;
 
-	const char* syntax = "Syntax: ./raytracer antialias|glossyreflect|reflect|softshadow|shadow|cylinder|all [width height]";
+	// please excuse the extra long line
+	const char* syntax = "Syntax: ./raytracer <feature> [width height]\nOptions for <feature> argument:\n- antialias -> show sphere with antialiasing\n- glossyreflect -> show sphere with glossy reflection\n- reflect --> show sphere with hard reflection\n- softshadow --> show sphere with soft shadow\n- shadow --> show sphere with hard shadow\n- cylinder --> show cylinder & sphere\n- all --> show sphere with soft shadow, hard shadow, antialiasing";
 
 	if (argc == 2 || argc == 4) {
 		char* feature = argv[1];
@@ -150,8 +151,8 @@ int main(int argc, char* argv[])
 
  	double factor3[3] = { 2.5, 2.5, 2.5 };
 
- 	Point3D eye3(1., 2., -1);
- 	Vector3D view3(-1., 0., -4.);
+	Point3D eye3(2., 2, -1);
+ 	Vector3D view3(-1., -2.5, -6.);
  	raytracer.render(width, height, eye3, view3, -1 * up, fov, view3_file);
 
  	return 0;
