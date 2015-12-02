@@ -44,7 +44,7 @@ bool UnitSquare::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 		if (ray.intersection.none || ray.intersection.t_value > t){
 			// set normals, set point in world coords as ray's intersection
 			Point3D point(xCheck, yCheck, 0.0);
-			Vector3D norm(0.0f, 0.0f, 1.0f);
+			Vector3D norm(0., 0., 1.);
 			norm.normalize();
 			Vector3D newNormal = transNorm(worldToModel, norm);
 			ray.intersection.t_value = t;
@@ -123,7 +123,7 @@ bool UnitCylinder::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 	newRay.origin = worldToModel * ray.origin;
 	newRay.dir = worldToModel * ray.dir;
 
-	Point3D centre(0.0f,0.0f,0.0f);
+	Point3D centre(0.,0.,0.);
 	Vector3D distance = newRay.origin - centre;
 
 	// r = 1
@@ -172,10 +172,13 @@ bool UnitCylinder::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 		If there are multiple intersections, then take the intersection with the
 		smallest positive λ (i.e., closest to the start of the ray).*/
 
+	// t1, t2, t3, t4 refers to http://www.irisa.fr/prive/kadi/Master_Recherche/cours_CTR/RayTracing.pdf
+
 	lambda0 = (1 - distance[2]) / newRay.dir[2]; // t1
 	lambda1 = -distance[2] / newRay.dir[2]; // t2
 
- // z = 0
+	// https://www.cl.cam.ac.uk/teaching/1999/AGraphHCI/SMAG/node2.html
+	// z = 0
 	bool outside = (lambda0 > 0) && (lambda1 > 0); // ray is outside caps
 	bool inside = ((lambda0 > 0) && (lambda1 < 0)) || ((lambda0 < 0) && (lambda1 > 0)); // ray is inside caps
 
@@ -193,7 +196,7 @@ bool UnitCylinder::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 
 	// determine normal vector based on where intersects
 	// z=-1 for bottom cap, z=1 for top cap
-	Vector3D normal = Vector3D(0, 0, 1);
+	Vector3D normal = Vector3D(0., 0., 1.);
 	if(cap_intersect[2] < 0.5) normal[2] = -1;
 
 	if(x2y2 < 1){
