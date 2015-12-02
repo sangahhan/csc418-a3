@@ -185,19 +185,19 @@ bool UnitCylinder::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 	if (outside) t = fmin(lambda0, lambda1); // pick smaller lambda --> t3
 	else t = fmax(lambda0, lambda1); // pick larger lambsa --> t4
 
+	// doesn't intersect a cap
+	if (!(ray.intersection.none || ray.intersection.t_value > t)) return false;
+
 	// find intersection with ray and cyl
 	Point3D cap_intersect = newRay.origin + t * newRay.dir;
-
-	//  x^2 + y^2 < 1
-	float x2y2 = cap_intersect[0] * cap_intersect[0] + cap_intersect[1] * cap_intersect[1];;
-
-	// doesn't intersect a cap
-	if (!ray.intersection.none && (ray.intersection.t_value <= t)) return false;
 
 	// determine normal vector based on where intersects
 	// z=-1 for bottom cap, z=1 for top cap
 	Vector3D normal = Vector3D(0., 0., 1.);
 	if(cap_intersect[2] < 0.5) normal[2] = -1;
+
+	//  x^2 + y^2 < 1
+	float x2y2 = cap_intersect[0] * cap_intersect[0] + cap_intersect[1] * cap_intersect[1];;
 
 	if(x2y2 < 1){
 		Vector3D newNormal = transNorm(worldToModel, normal);

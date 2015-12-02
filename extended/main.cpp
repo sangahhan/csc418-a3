@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
 	const char* view2_file = NULL;
 	const char* view3_file = NULL;
 
-	const char* syntax = "Syntax: ./raytracer antialias|glossyreflect|reflect|softshadow|shadow|all [width height]";
+	const char* syntax = "Syntax: ./raytracer antialias|glossyreflect|reflect|softshadow|shadow|cylinder|all [width height]";
 
 	if (argc == 2 || argc == 4) {
 		char* feature = argv[1];
