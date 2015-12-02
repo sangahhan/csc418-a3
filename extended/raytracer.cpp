@@ -15,6 +15,8 @@ Implementations of functions in raytracer.h
 #include <iostream>
 #include <cstdlib>
 
+
+
 Raytracer::Raytracer() : _lightSource(nullptr) {
 	_root = std::make_shared<SceneDagNode>();
 }

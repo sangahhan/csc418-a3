@@ -9,12 +9,21 @@
 
 ***********************************************************/
 #include "raytracer.h"
+#include "bmp_io.h"
 
 bool ANTIALIAS = false;
 bool GLOSSY_REFLECT = false;
 bool REFLECT = false;
 bool SHADOW = false;
 bool SOFT_SHADOW = false;
+bool MAPPING = false;
+
+//global mapping buffer
+unsigned char* rbuffer;
+unsigned char* gbuffer;
+unsigned char* bbuffer;
+int width;
+int height;
 
 int main(int argc, char* argv[])
 {
@@ -32,7 +41,7 @@ int main(int argc, char* argv[])
 	const char* view2_file = NULL;
 	const char* view3_file = NULL;
 
-	const char* syntax = "Syntax: ./raytracer antialias|glossyreflect|reflect|softshadow|shadow|all [width height]";
+	const char* syntax = "Syntax: ./raytracer antialias|glossyreflect|reflect|softshadow|shadow|mapping|all [width height]";
 
 	if (argc == 2 || argc == 4) {
 		char* feature = argv[1];
@@ -61,6 +70,11 @@ int main(int argc, char* argv[])
 			view1_file = "render_shadow1.bmp";
 			view2_file = "render_shadow2.bmp";
 			view3_file = "render_shadow3.bmp";
+		} else if (strcmp("mapping", feature) == 0) {
+			MAPPING = true;
+			view1_file = "mapping1.bmp";
+			view2_file = "mapping2.bmp";
+			view3_file = "mapping3.bmp";
 		} else if (strcmp("all", feature) == 0) {
 			ANTIALIAS = true;
 			GLOSSY_REFLECT = true;
@@ -90,44 +104,113 @@ int main(int argc, char* argv[])
 	//Vector3D view(0., 0., -0.8);
 	Vector3D up(0., 1., 0.);
 	double fov = 60;
+    
+    if (MAPPING){
+    int numbytesTextureMap = width * height * sizeof(unsigned char);
+	rbuffer = new unsigned char[numbytesTextureMap];
+	gbuffer = new unsigned char[numbytesTextureMap];
+	bbuffer = new unsigned char[numbytesTextureMap];
+	//inital buffer value
+	for (int i = 0; i < height; i++) 
+	{
+		for (int j = 0; j < width; j++) 
+		{
+			rbuffer[i*width+j] = 0;
+			gbuffer[i*width+j] = 0;
+			bbuffer[i*width+j] = 0;
+		}
+	}
+	int temp1 = width;
+	int temp2 = height; 
+	long unsigned int* widthTextureMap = new long unsigned int(width);
+	long int* heightTexturemap = new long int(height); 
+	bmp_read("texture_grass.bmp", widthTextureMap, heightTexturemap, &rbuffer, &gbuffer, &bbuffer); 
+	//std::cout <<" Finished reading: " << "worldMap.bmp" << std::endl; 
+	unsigned char* _rbuffer;
+	unsigned char* _gbuffer;    				
+	unsigned char* _bbuffer;
+	// test to see if data is correct
+	_rbuffer = new unsigned char[numbytesTextureMap];
+	_gbuffer = new unsigned char[numbytesTextureMap];
+	_bbuffer = new unsigned char[numbytesTextureMap];
+	for (int i = 0; i < height; i++) 
+	{
+		for (int j = 0; j < width; j++) 
+		{
+			_rbuffer[i*width+j] = (rbuffer[i*width+j]) ;
+			_gbuffer[i*width+j] = (gbuffer[i*width+j]);
+			_bbuffer[i*width+j] = (bbuffer[i*width+j]);
+		}
+	}
 
+	bmp_write( "output.bmp", width, height, _rbuffer, _gbuffer, _bbuffer );
+	//delete _rbuffer;
+	//delete _gbuffer;
+	//delete _bbuffer;
+
+	//Material::Ptr gold = std::make_shared<Material>( Colour(0.3, 0.3, 0.3), Colour(0.75164, 0.60648, 0.22648),
+			//Colour(0.628281, 0.555802, 0.366065),
+			//51.2, 1, 0.1, 1);
+    //Material::Ptr jade = std::make_shared<Material>( Colour(0, 0, 0), Colour(0.54, 0.89, 0.63),
+			//Colour(0.316228, 0.316228, 0.316228),
+			//12.8, 0, 1, 2);
+
+    }
 	// Defines a material for shading.
+	
     Material::Ptr gold = std::make_shared<Material>( Colour(0.3, 0.3, 0.3), Colour(0.75164, 0.60648, 0.22648),
 			Colour(0.628281, 0.555802, 0.366065),
-			51.2, 1, 0.1);
+			51.2, 1, 0.1, 1);
+    
     Material::Ptr jade = std::make_shared<Material>( Colour(0, 0, 0), Colour(0.54, 0.89, 0.63),
 			Colour(0.316228, 0.316228, 0.316228),
-			12.8, 0, 1);
+			12.8, 0, 1, 2);
+    
+    
 
 	// Defines a point light source.
 	raytracer.addLightSource( std::make_shared<PointLight>(Point3D(0., 0., 5.),
 				Colour(0.9, 0.9, 0.9) ) );
 
+
+
 	// Add a unit square into the scene with material mat.
+	
     SceneDagNode::Ptr sphere = raytracer.addObject( std::make_shared<UnitSphere>(), gold );
+    
     SceneDagNode::Ptr plane = raytracer.addObject( std::make_shared<UnitSquare>(), jade );
+    
     SceneDagNode::Ptr cylinder = raytracer.addObject( std::make_shared<UnitCylinder>(), gold );
+
 
 	// Apply some transformations to the unit square.
 	double factor1[3] = { 1.0, 2.0, 1.0 };
 	double factor2[3] = { 14., 14., 14. };
 	double factor3[3] = { 1.5, 1.5, 2 };
-	//raytracer.translate(sphere, Vector3D(0., 0., -6.));
+	
+	raytracer.translate(sphere, Vector3D(0., 0., -6.));
+	
 	 //raytracer.rotate(sphere, 'x', -45);
 	 //raytracer.rotate(sphere, 'z', 45);
 	 //raytracer.scale(sphere, Point3D(0., 0., 0.), factor1);
 
+
+
 	raytracer.translate(plane, Vector3D(0., 0., -7.));
 	raytracer.rotate(plane, 'z', 45);
 	raytracer.scale(plane, Point3D(0., 0., 0.), factor2);
+	 
 
-	raytracer.translate(cylinder, Vector3D(0, 0, -6));
-	raytracer.scale(cylinder, Point3D(0, 0, 0), factor3);
+
+	//raytracer.translate(cylinder, Vector3D(0, 0, -6));
+	//raytracer.scale(cylinder, Point3D(0, 0, 0), factor3);
 	
 	// Render the scene, feel free to make the image smaller for
 	// testing purposes.
 	//Vector3D view(0.75,-1, -6.);
 	raytracer.render(width, height, eye, view, up, fov, view1_file);
+	//std::cout <<" test" << std::endl; 
+
 
 	// Render it from a different point of view.
 	Point3D eye2(6., 1., -1.);
