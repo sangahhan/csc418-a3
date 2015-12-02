@@ -9,6 +9,12 @@
 
 ***********************************************************/
 #include "raytracer.h"
+
+bool ANTIALIAS = false;
+bool GLOSSY_REFLECT = false;
+bool REFLECT = false;
+bool SHADOW = false;
+bool SOFT_SHADOW = false;
 int main(int argc, char* argv[])
 {
 	// Build your scene and setup your camera here, by calling
@@ -24,6 +30,30 @@ int main(int argc, char* argv[])
 		width = atoi(argv[1]);
 		height = atoi(argv[2]);
 	}
+
+	if (argc == 2) {
+		char* feature = argv[1];
+		if (strcmp("antialias", feature) == 0){
+			ANTIALIAS = true;
+		} else if (strcmp("glossyreflect", feature) == 0) {
+			GLOSSY_REFLECT = true;
+		} else if (strcmp("reflect", feature) == 0) {
+			REFLECT = true;
+		} else if (strcmp("softshadow", feature) == 0) {
+			SOFT_SHADOW = true;
+		} else if (strcmp("shadow", feature) == 0) {
+			SHADOW = true;
+		} else if (strcmp("all", feature) == 0) {
+			ANTIALIAS = true;
+			GLOSSY_REFLECT = true;
+			REFLECT = false;
+			SOFT_SHADOW = true;
+			SHADOW = false;
+		} else {
+			std::cout << "Invalid argument." << std::endl;
+		}
+	}
+
 
 	// Camera parameters.
 	Point3D eye(0., 0., 1.);
