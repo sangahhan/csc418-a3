@@ -234,13 +234,14 @@ void Raytracer::computeShading( Ray3D& ray ) {
 			curLight->light->shade(ray);
 			traverseScene(_root, newRay);
 			if (!newRay.intersection.none && ray.intersection.mat != newRay.intersection.mat){
-				ray.col =  0.5 * ray.col;
+				curLight->light->shade(ray, true);
 			}
 		} else if (SOFT_SHADOW) {
 			// TODO: SOFT SHADOW
 			int n = 30;
 			//Colour sum(0., 0., 0.);
 			for (int i = 0; i < n; i++) {
+
 				// set up sample shadow rays
 				double jitter1 = (double)rand() / (double) RAND_MAX;
 				double jitter2 = (double)rand() / (double) RAND_MAX;
@@ -259,14 +260,18 @@ void Raytracer::computeShading( Ray3D& ray ) {
 
 				// if sample shadow rays intersect, shade the original ray
 				if (!newRay.intersection.none  && ray.intersection.mat != newRay.intersection.mat) {
-					ray.col =  0.5 * ray.col;
-
+					curLight->light->shade(ray, true);
+					//sum = sum + ray.col;
 				}
 			}
+			// if (sum[0] != 0. || sum[1] != 0. || sum[2] != 0.) {
+			// 	Colour average(sum[0]/n, sum[1]/n, sum[2]/n);
+			// 	ray.col = average;
+			// }
 		}  else {
 			curLight->light->shade(ray);
 		}
-		ray.col.clamp();
+		//ray.col.clamp();
 		curLight = curLight->next;
 	}
 }

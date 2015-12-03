@@ -12,6 +12,9 @@
 #include "light_source.h"
 
 void PointLight::shade( Ray3D& ray ) {
+	shade(ray, false);
+}
+void PointLight::shade( Ray3D& ray, bool shadow ) {
 	// TODO: implement this function to fill in values for ray.col
 	// using phong shading.  Make sure your vectors are normalized, and
 	// clamp colour values to 1.0.
@@ -48,8 +51,10 @@ void PointLight::shade( Ray3D& ray ) {
   //diffuse and ambient
   //ray.col = diffuse + ambient;
 
-  //Phong
-  ray.col = diffuse + ambient + specular;
+	//omit diffuse and specular terms from the local Phong model
+  if (shadow) ray.col = ambient;
+	//Phong
+	else ray.col = diffuse + ambient + specular;
 
   ray.col.clamp();
 
