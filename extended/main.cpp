@@ -128,16 +128,19 @@ int main(int argc, char* argv[])
     SceneDagNode::Ptr plane = raytracer.addObject( std::make_shared<UnitSquare>(), jade );
 
 	if (CYLINDER){
-		double factor3[3] = { 0.3,0.3,0.3 };
-		raytracer.scale(cylinder, Point3D(0., 0., 0.), factor3);
-		raytracer.translate(cylinder, Vector3D(1., 0., -5.));
+		double factor3[3] = { 1.5,1.5,1.5 };
+		
+		raytracer.translate(cylinder, Vector3D(0, 0., -6.));
+
 		//raytracer.rotate(cylinder, 'x', -30);
 
 	}
 	// Apply some transformations to the unit square.
  	double factor1[3] = { 1.0, 2.0, 1.0 };
  	double factor2[3] = { 14., 14., 14. };
+ 	if (! CYLINDER){
  	raytracer.translate(sphere, Vector3D(0., 0., -5.));
+    }
  	// raytracer.rotate(sphere, 'x', -45);
  	// raytracer.rotate(sphere, 'z', 45);
  	// raytracer.scale(sphere, Point3D(0., 0., 0.), factor1);
@@ -148,8 +151,10 @@ int main(int argc, char* argv[])
 
  	// Render the scene, feel free to make the image smaller for
  	// testing purposes.
+ 	if (CYLINDER){
  	Vector3D view(0.75,-1, -6.);
  	raytracer.render(width, height, eye, view, up, fov, view1_file);
+    }
 
  	// Render it from a different point of view.
  	Point3D eye2(6., 1., -1.);
