@@ -107,7 +107,7 @@ int main(int argc, char* argv[])
 	Vector3D up(0., 1., 0.);
 	double fov = 60;
     
-    //if (MAPPING){
+    if (MAPPING){
     char texture_filename[] = "texture_grass.bmp";
 	unsigned long int tex_w;
 	long int tex_h;
