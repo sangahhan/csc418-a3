@@ -23,6 +23,12 @@ extern bool SHADOW;
 extern bool SOFT_SHADOW;
 extern bool MAPPING;
 
+extern int width;
+extern int height;
+extern unsigned char* rbuffer;
+extern unsigned char* gbuffer;
+extern unsigned char* bbuffer;
+
 
 
 

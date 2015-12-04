@@ -22,6 +22,7 @@
 #define M_PI    3.14159265358979323846
 #endif
 
+
 template <typename T, int D>
 class Tuple: public std::array<T,D> {
     public:
@@ -143,9 +144,14 @@ std::ostream& operator <<(std::ostream& o, const Colour& c);
 
 struct Material {
     using Ptr = std::shared_ptr<Material>;
-    Material( Colour ambient, Colour diffuse, Colour specular, double exp, double ind, double opacity, int _imageMap) :
+    Material( Colour ambient, Colour diffuse, Colour specular, double exp, double ind, double opacity, int imageMap) :
         ambient(ambient), diffuse(diffuse), specular(specular),
-        specular_exp(exp), refract_index(ind) ,opacity(opacity), imageMap(_imageMap) {}
+        specular_exp(exp), refract_index(ind) ,opacity(opacity), imageMap(imageMap) {}
+    Material( int width, int height, unsigned char *rarray, unsigned char *garray, unsigned char *barray ) :
+        texture_width(width), texture_height(height),
+        rarray(rarray), garray(garray), barray(barray) {
+            is_texture = true;
+        }
 
     // Ambient components for Phong shading.
     Colour ambient;
@@ -162,6 +168,12 @@ struct Material {
     int imageMap; //0-> no mapping
                   //1->image mapping to worldmap
                   //2->texture mapping
+    bool is_texture = false;
+    int texture_width;
+    int texture_height;
+    unsigned char *rarray;
+    unsigned char *garray;
+    unsigned char *barray;
 };
 
 struct Intersection {

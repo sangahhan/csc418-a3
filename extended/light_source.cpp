@@ -28,6 +28,7 @@ void PointLight::shade( Ray3D& ray ) {
 	// before this function.
 
   // intersection normal
+  if(!ray.intersection.none) {
 	Vector3D N = ray.intersection.normal;
   N.normalize();
 
@@ -43,8 +44,9 @@ void PointLight::shade( Ray3D& ray ) {
   D.normalize();
 
   //image mapping
-  if(ray.intersection.mat->imageMap == 3)
-    {
+  if(ray.intersection.mat->imageMap == 1)
+  {
+      std::cout <<" check" << std::endl;
       Point3D itsPoint = ray.intersection.point; 
       Point3D centre = ray.intersection.CenterPoint; 
       double theta = acos((itsPoint[2]-centre[2])/RADIUS); 
@@ -62,7 +64,8 @@ void PointLight::shade( Ray3D& ray ) {
 
     }
     
-    else if (ray.intersection.mat->imageMap == 2){
+    if (ray.intersection.mat->imageMap == 2){
+      //std::cout <<" check" << std::endl;
       Point3D itsPoint = ray.intersection.point; 
      
       Point3D centre = ray.intersection.CenterPoint; 
@@ -111,6 +114,7 @@ void PointLight::shade( Ray3D& ray ) {
 }
 
   ray.col.clamp();
+}
 
 
 

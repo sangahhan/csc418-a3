@@ -25,6 +25,8 @@ unsigned char* bbuffer;
 int width;
 int height;
 
+
+
 int main(int argc, char* argv[])
 {
 	// Build your scene and setup your camera here, by calling
@@ -33,8 +35,8 @@ int main(int argc, char* argv[])
 	// change this if you're just implementing part one of the
 	// assignment.
 	Raytracer raytracer;
-	int width = 320;
-	int height = 240;
+	width = 320;
+	height = 240;
 
 
 	const char* view1_file = NULL;
@@ -105,53 +107,27 @@ int main(int argc, char* argv[])
 	Vector3D up(0., 1., 0.);
 	double fov = 60;
     
-    if (MAPPING){
-    int numbytesTextureMap = width * height * sizeof(unsigned char);
-	rbuffer = new unsigned char[numbytesTextureMap];
-	std::fill_n(rbuffer, numbytesTextureMap,0);
-	gbuffer = new unsigned char[numbytesTextureMap];
-	std::fill_n(gbuffer, numbytesTextureMap,0);
-	bbuffer = new unsigned char[numbytesTextureMap];
-	std::fill_n(bbuffer, numbytesTextureMap,0);
+    //if (MAPPING){
+    char texture_filename[] = "texture_grass.bmp";
+	unsigned long int tex_w;
+	long int tex_h;
+	unsigned char *rarray, *garray, *barray;
+	bool read_error = true;
+	printf("Reading texture (%s)... ", texture_filename);
+	read_error = bmp_read (texture_filename, &tex_w, &tex_h, &rarray, &garray, &barray);
+	printf("DONE.\n");
+	printf("Texture Width: %d, Height: %d\n", tex_w, tex_h);
+
+	if (read_error) {
+		printf("Texture read error, exiting...\n");
+		exit(1);
+	}
+	
+    //}
+	// Defines a material for shading.
+	Material::Ptr texture = std::make_shared<Material>( tex_w, tex_h, rarray, garray, barray);
 	
 
-	int temp1 = width;
-	int temp2 = height; 
-	long unsigned int* widthTextureMap = new long unsigned int(width);
-	long int* heightTexturemap = new long int(height); 
-	bmp_read("texture_grass.bmp", widthTextureMap, heightTexturemap, &rbuffer, &gbuffer, &bbuffer); 
-	//std::cout <<" Finished reading: " << "worldMap.bmp" << std::endl; 
-	unsigned char* _rbuffer;
-	unsigned char* _gbuffer;    				
-	unsigned char* _bbuffer;
-	// test to see if data is correct
-	_rbuffer = new unsigned char[numbytesTextureMap];
-	_gbuffer = new unsigned char[numbytesTextureMap];
-	_bbuffer = new unsigned char[numbytesTextureMap];
-	for (int i = 0; i < height; i++) 
-	{
-		for (int j = 0; j < width; j++) 
-		{
-			_rbuffer[i*width+j] = (rbuffer[i*width+j]) ;
-			_gbuffer[i*width+j] = (gbuffer[i*width+j]);
-			_bbuffer[i*width+j] = (bbuffer[i*width+j]);
-		}
-	}
-
-	bmp_write( "output.bmp", width, height, _rbuffer, _gbuffer, _bbuffer );
-	//delete _rbuffer;
-	//delete _gbuffer;
-	//delete _bbuffer;
-
-	//Material::Ptr gold = std::make_shared<Material>( Colour(0.3, 0.3, 0.3), Colour(0.75164, 0.60648, 0.22648),
-			//Colour(0.628281, 0.555802, 0.366065),
-			//51.2, 1, 0.1, 1);
-    //Material::Ptr jade = std::make_shared<Material>( Colour(0, 0, 0), Colour(0.54, 0.89, 0.63),
-			//Colour(0.316228, 0.316228, 0.316228),
-			//12.8, 0, 1, 2);
-
-    }
-	// Defines a material for shading.
 	
     Material::Ptr gold = std::make_shared<Material>( Colour(0.3, 0.3, 0.3), Colour(0.75164, 0.60648, 0.22648),
 			Colour(0.628281, 0.555802, 0.366065),
@@ -159,13 +135,18 @@ int main(int argc, char* argv[])
     
     Material::Ptr jade = std::make_shared<Material>( Colour(0, 0, 0), Colour(0.54, 0.89, 0.63),
 			Colour(0.316228, 0.316228, 0.316228),
-			12.8, 0, 1, 1);
+			12.8, 0, 1, 0);
+    Material::Ptr colorful = std::make_shared<Material>( Colour(0, 0, 0), Colour(0., 0., 0.),
+			Colour(0., 0., 0.),
+			12.8, 0, 1, 2);
+    
     
     
 
 	// Defines a point light source.
 	raytracer.addLightSource( std::make_shared<PointLight>(Point3D(0., 0., 5.),
 				Colour(0.9, 0.9, 0.9) ) );
+    
 
 
 
@@ -173,9 +154,11 @@ int main(int argc, char* argv[])
 	
     SceneDagNode::Ptr sphere = raytracer.addObject( std::make_shared<UnitSphere>(), gold );
     
-    SceneDagNode::Ptr plane = raytracer.addObject( std::make_shared<UnitSquare>(), jade );
     
-    SceneDagNode::Ptr cylinder = raytracer.addObject( std::make_shared<UnitCylinder>(), gold );
+    SceneDagNode::Ptr plane = raytracer.addObject( std::make_shared<UnitSquare>(), jade );
+    //SceneDagNode::Ptr plane = raytracer.addObject( std::make_shared<UnitSquare>(), colorful );
+    
+    //SceneDagNode::Ptr cylinder = raytracer.addObject( std::make_shared<UnitCylinder>(), gold );
 
 
 	// Apply some transformations to the unit square.
@@ -183,7 +166,7 @@ int main(int argc, char* argv[])
 	double factor2[3] = { 14., 14., 14. };
 	double factor3[3] = { 1.5, 1.5, 2 };
 	
-	//raytracer.translate(sphere, Vector3D(0., 0., -6.));
+	raytracer.translate(sphere, Vector3D(0., 0., -6.));
 	
 	 //raytracer.rotate(sphere, 'x', -45);
 	 //raytracer.rotate(sphere, 'z', 45);
@@ -197,8 +180,8 @@ int main(int argc, char* argv[])
 	 
 
 
-	raytracer.translate(cylinder, Vector3D(0, 0, -6));
-	raytracer.scale(cylinder, Point3D(0, 0, 0), factor3);
+	//raytracer.translate(cylinder, Vector3D(0, 0, -6));
+	//raytracer.scale(cylinder, Point3D(0, 0, 0), factor3);
 	
 	// Render the scene, feel free to make the image smaller for
 	// testing purposes.
