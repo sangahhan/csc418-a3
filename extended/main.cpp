@@ -107,25 +107,10 @@ int main(int argc, char* argv[])
 	Vector3D up(0., 1., 0.);
 	double fov = 60;
     
+    int map = 0;
     if (MAPPING){
-    char texture_filename[] = "texture_grass.bmp";
-	unsigned long int tex_w;
-	long int tex_h;
-	unsigned char *rarray, *garray, *barray;
-	bool read_error = true;
-	printf("Reading texture (%s)... ", texture_filename);
-	read_error = bmp_read (texture_filename, &tex_w, &tex_h, &rarray, &garray, &barray);
-	printf("DONE.\n");
-	printf("Texture Width: %d, Height: %d\n", tex_w, tex_h);
-
-	if (read_error) {
-		printf("Texture read error, exiting...\n");
-		exit(1);
-	}
-	
-    //}
-	// Defines a material for shading.
-	Material::Ptr texture = std::make_shared<Material>( tex_w, tex_h, rarray, garray, barray);
+    	map = 2;
+    }
 	
 
 	
@@ -135,10 +120,10 @@ int main(int argc, char* argv[])
     
     Material::Ptr jade = std::make_shared<Material>( Colour(0, 0, 0), Colour(0.54, 0.89, 0.63),
 			Colour(0.316228, 0.316228, 0.316228),
-			12.8, 0, 1, 0);
+			12.8, 0, 1, map);
     Material::Ptr colorful = std::make_shared<Material>( Colour(0, 0, 0), Colour(0., 0., 0.),
 			Colour(0., 0., 0.),
-			12.8, 0, 1, 2);
+			12.8, 0, 1, 0);
     
     
     
@@ -201,3 +186,4 @@ int main(int argc, char* argv[])
 
 	return 0;
 }
+
