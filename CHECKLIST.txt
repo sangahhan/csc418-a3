@@ -29,8 +29,8 @@ A. PLEASE ANSWER THE FOLLOWING QUESTIONS (your assignment will not be graded oth
        Portion(s) of assignment completed by that student (see checklist below)
        - Part 1d
        - Features in Part 2:
+          - cylinder
           - texture mapping
-          - environment mapping
 
 
 -----------------------------------------------------------------------------------------

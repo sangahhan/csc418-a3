@@ -23,6 +23,16 @@
 #endif
 
 
+
+extern bool ANTIALIAS;
+extern bool GLOSSY_REFLECT;
+extern bool REFLECT;
+extern bool SHADOW;
+extern bool SOFT_SHADOW;
+extern bool CYLINDER;
+extern bool TEXTURE;
+
+
 template <typename T, int D>
 class Tuple: public std::array<T,D> {
     public:
@@ -144,14 +154,13 @@ std::ostream& operator <<(std::ostream& o, const Colour& c);
 
 struct Material {
     using Ptr = std::shared_ptr<Material>;
-    Material( Colour ambient, Colour diffuse, Colour specular, double exp, double ind, double opacity, int imageMap) :
+    //TODO: TEXTURE
+    Material( Colour ambient, Colour diffuse, Colour specular, double exp) :
         ambient(ambient), diffuse(diffuse), specular(specular),
-        specular_exp(exp), refract_index(ind) ,opacity(opacity), imageMap(imageMap) {}
+        specular_exp(exp), texture(false) {}
     Material( int width, int height, unsigned char *rarray, unsigned char *garray, unsigned char *barray ) :
         texture_width(width), texture_height(height),
-        rarray(rarray), garray(garray), barray(barray) {
-            is_texture = true;
-        }
+        rarray(rarray), garray(garray), barray(barray), texture(true) {}
 
     // Ambient components for Phong shading.
     Colour ambient;
@@ -160,20 +169,18 @@ struct Material {
     // Specular components for Phong shading.
     Colour specular;
     // Specular expoent.
-   
+
 
     double specular_exp;
-    double refract_index;
-    double opacity;
-    int imageMap; //0-> no mapping
-                  //1->image mapping to worldmap
-                  //2->texture mapping
-    bool is_texture = false;
+
     int texture_width;
     int texture_height;
     unsigned char *rarray;
     unsigned char *garray;
     unsigned char *barray;
+    bool texture = false;
+
+
 };
 
 struct Intersection {
@@ -190,8 +197,6 @@ struct Intersection {
     double t_value;
     // Set to true when no intersection has occured.
     bool none;
-
-    Point3D CenterPoint;
 };
 
 // Ray structure.

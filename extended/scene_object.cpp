@@ -44,7 +44,7 @@ bool UnitSquare::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 		if (ray.intersection.none || ray.intersection.t_value > t){
 			// set normals, set point in world coords as ray's intersection
 			Point3D point(xCheck, yCheck, 0.0);
-			Vector3D norm(0.0f, 0.0f, 1.0f);
+			Vector3D norm(0., 0., 1.);
 			norm.normalize();
 			Vector3D newNormal = transNorm(worldToModel, norm);
 			ray.intersection.t_value = t;
@@ -86,7 +86,7 @@ bool UnitSphere::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 
 	double d = b * b - a * c;
 
-	float t = -1;
+	float t;
 
 	// negative discriminant --> ray doesn't intersect
 	if (d < 0) return false;
@@ -97,37 +97,38 @@ bool UnitSphere::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 		t = fmin(lambda0, lambda1); // two intersection
 	}
 
-	if (t <= 0) return false;
-			// update the given ray
-			if (ray.intersection.none || ray.intersection.t_value > t) {
-				// set normals, set point in world coords as ray's intersection
-					Point3D point = newRay.origin + t * newRay.dir;
-					Vector3D norm = 2 * (point - centre);
-					Vector3D newNormal = transNorm(worldToModel, norm);
-					newNormal.normalize();
-					ray.intersection.t_value = t;
-					ray.intersection.point = modelToWorld * point;
-					ray.intersection.normal = newNormal;
-					ray.intersection.none = false;
-					return true;
-			}
+	// update the given ray
+	if (ray.intersection.none || ray.intersection.t_value > t) {
+		// set normals, set point in world coords as ray's intersection
+		Point3D point = newRay.origin + t * newRay.dir;
+		Vector3D norm = 2 * (point - centre);
+		Vector3D newNormal = transNorm(worldToModel, norm);
+		newNormal.normalize();
+		ray.intersection.t_value = t;
+		ray.intersection.point = modelToWorld * point;
+		ray.intersection.normal = newNormal;
+		ray.intersection.none = false;
+		return true;
+	}
 
 	return false;
 }
 
 bool UnitCylinder::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 		const Matrix4x4& modelToWorld ) {
-	
-	
+
+	// TODO: CYLINDER
+
+
 	Ray3D newRay;
 	newRay.origin = worldToModel*ray.origin;
     newRay.dir = worldToModel*ray.dir;
-	
+
 	Point3D centre(0.0f,0.0f,0.0f);
 
 
 	// Quadratic formula
-	
+
 	double lambda1;
 	double lambda2;
 	double lambda3;
@@ -141,8 +142,8 @@ bool UnitCylinder::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 	double b = newRay.origin[0]*newRay.dir[0] + newRay.origin[1] * newRay.dir[1];
 	double c = pow(newRay.origin[0],2) + pow(newRay.origin[1],2) - 1;
 
-	
-	
+
+
 	double d = b*b - a*c;
     if (d<0) return false;
     lambda1 = -b/a + sqrt(d) / a;
@@ -153,8 +154,8 @@ bool UnitCylinder::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 	}else{
 		lambda4 = lambda2;
 	}
-		
-	
+
+
 	lambda1 = -(0.5+newRay.origin[2])/newRay.dir[2];
 	lambda2 = (0.5-newRay.origin[2])/newRay.dir[2];
 	if (lambda1 < lambda2){
@@ -171,9 +172,9 @@ bool UnitCylinder::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 	}
 
 	if (pow(lambda3,2) < 1/1000) return false;
-	
+
 	itsPoint = newRay.origin + lambda3 * newRay.dir;
-	
+
 	if (pow(itsPoint[0],2) + pow(itsPoint[1],2) <=  1){
 		if (!ray.intersection.none > ray.intersection.t_value) return false;
 		ray.intersection.t_value = lambda3;
@@ -186,18 +187,18 @@ bool UnitCylinder::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 
 	if (pow(lambda4 ,2) < 1/1000) return false;
 	itsPoint = newRay.origin + lambda4 * newRay.dir;
-	
+
 	nor2[0] = itsPoint[0];
 	nor2[1] = itsPoint[1];
 	nor2[2] = 0;
 	nor2.normalize();
 
 
-   if (itsPoint[2] < 0.5 && itsPoint[2] > -0.5)
+  if (itsPoint[2] < 0.5 && itsPoint[2] > -0.5)
 	{
 		if (!ray.intersection.none > ray.intersection.t_value)
 			return false;
-		
+
 		ray.intersection.point = modelToWorld * itsPoint;
 		Point3D tmp1(itsPoint[0],itsPoint[1],0);
 		ray.intersection.t_value = lambda4;

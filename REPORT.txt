@@ -87,8 +87,24 @@ the damp factor.
 - Look for "TODO: GLOSSY REFLECT"
 - Renders: render_glossyreflect{1,2,3}.bmp -- using 4 rays
 
-Texture mapping - Li Wan
-- Not implemented
+Cylinder - Li Wan
+We added code to detect intersections with cylinders in scene_object.cpp.
+We first find intersections around the cylinder wall. Then we checked for
+intersections at the cylinder caps. The cylinder is drawn with the same material
+as the sphere.
+- Run: ./raytracer cylinder
+- Look for "TODO: CYLINDER"
+- Renders: render_cylinder{1,2,3}.bmp
 
-Environment mapping - Li Wan
-- Not implemented
+
+Texture mapping - Li Wan
+We use a global buffer for R, G, and B values for the image. The image's RGB
+values are loaded into the proper buffer. Then we find the x,y pixel for each
+point on the object we map to (the plane) and set the colour of the ray that
+intersects the object to be equal to the colour on the image. Unfortunately,
+this feature is not 100% working, as we are not getting the proper x,y pixel to
+obtain from the texture. You can find relevant code in light_source.cpp,
+main.cpp, and util.h. 
+- Run: ./raytracer texture
+- Look for "TODO: TEXTURE"
+- Renders: render_texture{1,2,3}.bmp

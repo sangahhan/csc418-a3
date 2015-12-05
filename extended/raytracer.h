@@ -16,23 +16,6 @@
 #include "light_source.h"
 #include <memory>
 
-extern bool ANTIALIAS;
-extern bool GLOSSY_REFLECT;
-extern bool REFLECT;
-extern bool SHADOW;
-extern bool SOFT_SHADOW;
-extern bool MAPPING;
-
-extern int width;
-extern int height;
-extern unsigned char* rbuffer;
-extern unsigned char* gbuffer;
-extern unsigned char* bbuffer;
-
-
-
-
-
 // Linked list containing light sources in the scene.
 struct LightListNode {
     using Ptr = std::shared_ptr<LightListNode>;
@@ -129,6 +112,9 @@ private:
 	// Return the colour of the ray after intersection and shading, call
 	// this function recursively for reflection and refraction.
 	Colour shadeRay( Ray3D& ray );
+
+  Colour shadeRay( Ray3D& ray, int n );
+
 
 	// Constructs a view to world transformation matrix based on the
 	// camera parameters.
