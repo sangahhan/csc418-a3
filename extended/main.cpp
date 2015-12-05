@@ -120,10 +120,10 @@ int main(int argc, char* argv[])
     
     Material::Ptr jade = std::make_shared<Material>( Colour(0, 0, 0), Colour(0.54, 0.89, 0.63),
 			Colour(0.316228, 0.316228, 0.316228),
-			12.8, 0, 1, map);
+			12.8, 0, 1, 0);
     Material::Ptr colorful = std::make_shared<Material>( Colour(0, 0, 0), Colour(0., 0., 0.),
 			Colour(0., 0., 0.),
-			12.8, 0, 1, 0);
+			12.8, 0, 1, map);
     
     
     
